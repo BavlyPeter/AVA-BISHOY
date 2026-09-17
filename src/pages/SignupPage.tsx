@@ -311,7 +311,7 @@ export function SignupPage({ onSignup, onBack, editData: propsEditData, clearEdi
         toast.success('تم تحديث بيانات الخادم بنجاح');
       } else {
         // 1. Create Supabase Auth User with a dummy email based on the generated Smart ID
-        const dummyEmail = `${finalTeacherId.toLowerCase()}@aribsalin.com`;
+        const dummyEmail = `${finalTeacherId.toLowerCase()}@avabishoy.com`;
         const defaultPassword = formData.password || '123456'; // Ensure a password exists
 
         const { data: authData, error: authError } = await supabase.auth.signUp({

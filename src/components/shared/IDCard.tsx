@@ -45,10 +45,10 @@ export function IDCard({ student }: IDCardProps) {
         style={{ background: 'linear-gradient(135deg, #8B1538 0%, #C9A961 100%)' }}
       >
         {/* Church Logo - Upper Right */}
-        <img src={churchLogo} alt="Church Logo" className="absolute top-3 right-2 w-21 h-14 object-contain" />
+        <img src={churchLogo} alt="Church Logo" className="absolute top-3 left-1/2 transform -translate-x-1/2 h-14 object-contain" />
 
         {/* Festival Logo - Center */}
-        <img src={festivalLogo} alt="Festival Logo" className="absolute top-3 left-1/2 transform -translate-x-1/2 h-14 object-contain" />
+        {/* <img src={festivalLogo} alt="Festival Logo" className="absolute top-3 left-1/2 transform -translate-x-1/2 h-14 object-contain" /> */}
       </div>
 
       {/* Content Wrapper */}

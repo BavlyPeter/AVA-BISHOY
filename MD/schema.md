@@ -1,6 +1,12 @@
 -- WARNING: This schema is for context only and is not meant to be run.
 -- Table order and constraints may not be valid for execution.
 
+CREATE TABLE public.areas (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  name character varying NOT NULL UNIQUE,
+  created_at timestamp with time zone DEFAULT timezone('utc'::text, now()),
+  CONSTRAINT areas_pkey PRIMARY KEY (id)
+);
 CREATE TABLE public.participants (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   full_name text,
@@ -20,16 +26,6 @@ CREATE TABLE public.participants (
   academic_year text,
   participant_id text UNIQUE,
   CONSTRAINT participants_pkey PRIMARY KEY (id)
-);
-CREATE TABLE public.attendance_logs (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  participant_id uuid NOT NULL,
-  scanned_at timestamp with time zone DEFAULT now(),
-  servant_id uuid,
-  attendance_date date DEFAULT CURRENT_DATE,
-  CONSTRAINT attendance_logs_pkey PRIMARY KEY (id),
-  CONSTRAINT attendance_logs_servant_id_fkey FOREIGN KEY (servant_id) REFERENCES public.servants(id),
-  CONSTRAINT attendance_logs_participant_id_fkey FOREIGN KEY (participant_id) REFERENCES public.participants(id)
 );
 CREATE TABLE public.servants (
   created_at timestamp with time zone DEFAULT now(),
@@ -52,11 +48,15 @@ CREATE TABLE public.servants (
   CONSTRAINT servants_pkey PRIMARY KEY (id),
   CONSTRAINT servants_auth_fkey FOREIGN KEY (id) REFERENCES auth.users(id)
 );
-CREATE TABLE public.areas (
+CREATE TABLE public.attendance_logs (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
-  name character varying NOT NULL UNIQUE,
-  created_at timestamp with time zone DEFAULT timezone('utc'::text, now()),
-  CONSTRAINT areas_pkey PRIMARY KEY (id)
+  participant_id uuid NOT NULL,
+  scanned_at timestamp with time zone DEFAULT now(),
+  servant_id uuid,
+  attendance_date date DEFAULT CURRENT_DATE,
+  CONSTRAINT attendance_logs_pkey PRIMARY KEY (id),
+  CONSTRAINT attendance_logs_participant_id_fkey FOREIGN KEY (participant_id) REFERENCES public.participants(id),
+  CONSTRAINT attendance_logs_servant_id_fkey FOREIGN KEY (servant_id) REFERENCES public.servants(id)
 );
 CREATE TABLE public.points_transactions (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -67,8 +67,8 @@ CREATE TABLE public.points_transactions (
   description text,
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()),
   CONSTRAINT points_transactions_pkey PRIMARY KEY (id),
-  CONSTRAINT points_transactions_servant_id_fkey FOREIGN KEY (servant_id) REFERENCES public.servants(id),
-  CONSTRAINT points_transactions_participant_id_fkey FOREIGN KEY (participant_id) REFERENCES public.participants(id)
+  CONSTRAINT points_transactions_participant_id_fkey FOREIGN KEY (participant_id) REFERENCES public.participants(id),
+  CONSTRAINT points_transactions_servant_id_fkey FOREIGN KEY (servant_id) REFERENCES public.servants(id)
 );
 CREATE TABLE public.financial_transactions (
   id uuid NOT NULL DEFAULT gen_random_uuid(),

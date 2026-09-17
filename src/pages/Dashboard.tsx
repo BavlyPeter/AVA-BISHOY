@@ -71,7 +71,7 @@ export function Dashboard({
       <div className="bg-card border-b-2 border-primary/20 py-4 px-4 sticky top-0 z-10 shadow-sm">
         <div className="flex items-center justify-between">
           <img src={churchLogo} alt="Church Logo" className="w-14 h-14 object-contain" />
-          <img src={festivalLogo} alt="Festival Logo" className="h-14 object-contain" />
+          {/* <img src={festivalLogo} alt="Festival Logo" className="h-14 object-contain" /> */}
           <div className="w-14" /> {/* Spacer for centering */}
         </div>
       </div>

@@ -1,6 +1,6 @@
-<!-- this a prompt to Update the `ARIBSALIN-DOCUMENTATION.md` file. -->
+<!-- this a prompt to Update the `AVA Bishoy-DOCUMENTATION.md` file. -->
 
-Act as an Expert Software Architect and Technical Writer. Your task is to deeply analyze the entire codebase of this workspace and Update a comprehensive, definitive master documentation file named `ARIBSALIN-DOCUMENTATION.md` in `MD/ARIBSALIN-DOCUMENTATION.md`.
+Act as an Expert Software Architect and Technical Writer. Your task is to deeply analyze the entire codebase of this workspace and Update a comprehensive, definitive master documentation file named `AVA Bishoy-DOCUMENTATION.md` in `MD/AVA Bishoy-DOCUMENTATION.md`.
 
 This documentation must be exhaustive, serving as the ultimate guide for any new human developer or AI model joining the project. Do not hallucinate; base all your explanations strictly on the actual files, code, and configuration present in this workspace.
 
@@ -18,7 +18,7 @@ First, silently scan and read the following critical files and directories to un
 * @`src/utils/` (to understand the utility functions and helper methods).
 * @`/MD` (to understand the documentation structure and Database Schema).
 
-### Step 2: Update `ARIBSALIN-DOCUMENTATION.md`
+### Step 2: Update `AVA Bishoy-DOCUMENTATION.md`
 Based on your analysis, Update a beautifully formatted Markdown file containing the following exact sections:
 
 1. **Project Idea & Concept**

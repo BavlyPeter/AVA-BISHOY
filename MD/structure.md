@@ -6,7 +6,7 @@
 - vercel.json
 - vite.config.ts
 - MD/
-  - ARIBSALIN-DOCUMENTATION.md
+  - AVA Bishoy-DOCUMENTATION.md
   - CHANGELOG.md
   - FEATURES.md
   - Guidelines.md

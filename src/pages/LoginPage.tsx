@@ -32,7 +32,7 @@ export function LoginPage({ onLogin, onNavigateToSignup }: LoginPageProps = {}) 
     setIsLoading(true);
 
     try {
-      const email = `${teacherId.trim().toLowerCase()}@aribsalin.com`;
+      const email = `${teacherId.trim().toLowerCase()}@avabishoy.com`;
 
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email,
@@ -90,7 +90,7 @@ export function LoginPage({ onLogin, onNavigateToSignup }: LoginPageProps = {}) 
           <div className="flex items-center gap-3">
             <img src={churchLogo} alt="Church Logo" className="w-14 h-14 object-contain" />
           </div>
-            <img src={festivalLogo} alt="Festival Logo" className="h-14 object-contain" />
+            {/* <img src={festivalLogo} alt="Festival Logo" className="h-14 object-contain" /> */}
           <button
             onClick={() => navigate('/')}
             className="p-2 hover:bg-muted rounded-lg active:scale-95 transition-transform text-foreground"

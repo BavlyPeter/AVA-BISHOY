@@ -1,7 +1,7 @@
 
-  # Aribsalin
+  # AVA Bishoy
 
-  This is a code bundle for Aribsalin. The original project is available at https://www.figma.com/design/P9NP1E6QLMWFpnFh328E3y/Aribsalin.
+  This is a code bundle for AVA Bishoy. The original project is available at https://www.figma.com/design/P9NP1E6QLMWFpnFh328E3y/AVA Bishoy.
 
   ## Running the code
 

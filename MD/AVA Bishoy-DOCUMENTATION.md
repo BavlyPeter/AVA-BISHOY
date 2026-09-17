@@ -1,12 +1,12 @@
-# اريبصالين (Aribsalin) - Summer Festival & Sunday School Management System
+# اريبصالين (AVA Bishoy) - Summer Festival & Sunday School Management System
 ## Definitive Master Technical Architecture & Developer Reference Manual
 
 **System Version:** `2.0.0` (URL-Based Routing, Global Zustand Store, Granular RBAC, Smart ID Gap-Filling, Offline-Safe Scanning & Digital Badging)  
 **Target Platform:** Mobile-First Responsive Web Application / PWA-Ready  
 **Primary Language & Direction:** Arabic (`ar`) / Right-to-Left (`dir="rtl"`)  
 **Parish / Organization:** Church of the Great Martyr St. Mina the Wonderworker & Pope Kyrillos VI - Aswan  
-**Repository Working Directory:** `D:\Aribsalin\Aribsalin`  
-**Documentation Path:** `MD/ARIBSALIN-DOCUMENTATION.md`  
+**Repository Working Directory:** `D:\AVA Bishoy\AVA Bishoy`  
+**Documentation Path:** `MD/AVA Bishoy-DOCUMENTATION.md`  
 **Last Revised:** September 2026  
 
 ---
@@ -45,13 +45,13 @@
 ## 1. Project Idea & Concept
 
 ### Executive Summary
-**اريبصالين (Aribsalin)** is an enterprise-grade, mobile-first festival, Sunday school, and church ministry management system engineered specifically for the **Church of the Great Martyr St. Mina the Wonderworker & Pope Kyrillos VI in Aswan, Egypt**. Built as a reactive single-page application (SPA), the platform digitizes and unifies the operational lifecycle of summer deacon programs, spiritual festivals, and weekly youth services across all educational cohorts—from Kindergarten (`حضانة`) through University and Graduates (`جامعيين وخريجين`).
+**اريبصالين (AVA Bishoy)** is an enterprise-grade, mobile-first festival, Sunday school, and church ministry management system engineered specifically for the **Church of the Great Martyr St. Mina the Wonderworker & Pope Kyrillos VI in Aswan, Egypt**. Built as a reactive single-page application (SPA), the platform digitizes and unifies the operational lifecycle of summer deacon programs, spiritual festivals, and weekly youth services across all educational cohorts—from Kindergarten (`حضانة`) through University and Graduates (`جامعيين وخريجين`).
 
-The name **Aribsalin** originates in the Coptic hymnological tradition (from Coptic: ⲁⲣⲓⲯⲁⲗⲓⲛ, meaning *"Chant"* or *"Sing hymns"* — أريبصالين), honoring the spiritual, liturgical, and pedagogical roots of the church's annual summer festival.
+The name **AVA Bishoy** originates in the Coptic hymnological tradition (from Coptic: ⲁⲣⲓⲯⲁⲗⲓⲛ, meaning *"Chant"* or *"Sing hymns"* — أريبصالين), honoring the spiritual, liturgical, and pedagogical roots of the church's annual summer festival.
 
 ```
        +-------------------------------------------------------------+
-       |                  اريبصالين (Aribsalin)                     |
+       |                  اريبصالين (AVA Bishoy)                     |
        |         Church Festival & Sunday School Engine              |
        +-------------------------------------------------------------+
                                        |
@@ -71,13 +71,13 @@ The name **Aribsalin** originates in the Coptic hymnological tradition (from Cop
 Traditional parish festivals, youth camps, and Sunday schools operate under intense arrival pressures, managing hundreds of children and teenagers within narrow check-in windows. Previously reliant on paper rosters, physical stamp cards, and fragmented cash logs, operations suffered from recurring systemic failures:
 
 1. **Morning Arrival Bottlenecks:**  
-   Manual paper roll-calls for hundreds of arriving participants produced queues, congestion, and delays to morning prayer and liturgy. Aribsalin provides **hardware camera and screenshot-based QR badge scanning** that parses credentials, writes attendance logs, awards points, and updates state in under **300 milliseconds**.
+   Manual paper roll-calls for hundreds of arriving participants produced queues, congestion, and delays to morning prayer and liturgy. AVA Bishoy provides **hardware camera and screenshot-based QR badge scanning** that parses credentials, writes attendance logs, awards points, and updates state in under **300 milliseconds**.
 2. **Attendance Fraud & Duplicate Claims:**  
-   Physical punch cards and paper check-ins are easily duplicated, forged, or stamped multiple times in a single day. Aribsalin enforces an atomic PostgreSQL unique constraint (`unique_daily_attendance` on `participant_id` and `attendance_date`), strictly blocking duplicate check-in credits on the same calendar day.
+   Physical punch cards and paper check-ins are easily duplicated, forged, or stamped multiple times in a single day. AVA Bishoy enforces an atomic PostgreSQL unique constraint (`unique_daily_attendance` on `participant_id` and `attendance_date`), strictly blocking duplicate check-in credits on the same calendar day.
 3. **Loss of Physical Badges:**  
-   Children frequently lose, damage, or forget physical paper badges. Aribsalin generates **dynamic digital ID cards** rendered client-side (350x550px) that can be downloaded as high-resolution PNGs directly onto student smartphones, or compiled by church leaders into printable, batch-processed PDF card decks.
+   Children frequently lose, damage, or forget physical paper badges. AVA Bishoy generates **dynamic digital ID cards** rendered client-side (350x550px) that can be downloaded as high-resolution PNGs directly onto student smartphones, or compiled by church leaders into printable, batch-processed PDF card decks.
 4. **Disorganized Reward Economy:**  
-   Points awarded for scripture memorization, hymn recitation, attendance, and good behavior were previously recorded in personal notebooks, causing disputes during festival marketplace prize redemptions. Aribsalin provides an immutable, append-only **double-entry points ledger** (`points_transactions`) with strict balance validation that prevents overdrafts during marketplace redemptions.
+   Points awarded for scripture memorization, hymn recitation, attendance, and good behavior were previously recorded in personal notebooks, causing disputes during festival marketplace prize redemptions. AVA Bishoy provides an immutable, append-only **double-entry points ledger** (`points_transactions`) with strict balance validation that prevents overdrafts during marketplace redemptions.
 5. **Decentralized Multi-Stage Management:**  
    Church cohorts (Kindergarten, Primary 1–2, Primary 3–4, Primary 5–6, Preparatory, Secondary, University/Graduates) have distinct supervisors. Class supervisors need immediate visibility into their cohort's attendance, point distribution, and member profiles without corrupting or modifying data from other stages.
 6. **Financial Opacity & Fragmented Expenses:**  
@@ -114,7 +114,7 @@ Traditional parish festivals, youth camps, and Sunday schools operate under inte
 
 ### Core Technology Inventory
 
-| Technology / Library | Version | Category | Architectural Purpose in Aribsalin |
+| Technology / Library | Version | Category | Architectural Purpose in AVA Bishoy |
 |---|---|---|---|
 | **React** | `18.3.1` | UI Library | Component lifecycle, hooks, and virtual DOM rendering. |
 | **TypeScript** | `~5.6.2` | Language | Strict type definitions (`StudentData`, `Participant`, `TeacherData`). |
@@ -145,7 +145,7 @@ Traditional parish festivals, youth camps, and Sunday schools operate under inte
 4. **Supabase PostgreSQL & Storage:**  
    Eliminates backend infrastructure management while providing PostgreSQL ACID guarantees, relational integrity, row-level security, and persistent storage buckets (`profiles/`) for participant avatars.
 5. **Hardened Dual-Instance QR Engine (`html5-qrcode`):**  
-   Mobile web browsers behave inconsistently when cameras switch between live video capture and file upload analysis. Aribsalin runs an active live scanner on `#qr-reader` and boots an isolated off-screen scanner instance on `#file-qr-reader` for image uploads, disabling image smoothing to maintain sharp pixel edges for QR recognition.
+   Mobile web browsers behave inconsistently when cameras switch between live video capture and file upload analysis. AVA Bishoy runs an active live scanner on `#qr-reader` and boots an isolated off-screen scanner instance on `#file-qr-reader` for image uploads, disabling image smoothing to maintain sharp pixel edges for QR recognition.
 6. **Client-Side Document Synthesis (`html2canvas` + `jsPDF`):**  
    Printing badges for 400+ participants on church servers creates heavy CPU and bandwidth spikes. Generating high-resolution cards directly within the administrator's browser in micro-batches of 8 offloads 100% of rendering to the client.
 
@@ -312,7 +312,7 @@ flowchart TD
 stateDiagram-v2
     [*] --> ServantSignup: Servant fills /signup form
     ServantSignup --> ComputeID: System generates Smart ID (e.g. NP101)
-    ComputeID --> CreateAuth: auth.users record created with synthetic email (np101@aribsalin.com)
+    ComputeID --> CreateAuth: auth.users record created with synthetic email (np101@avabishoy.com)
     CreateAuth --> InsertServants: servants record inserted with status = 'pending'
     InsertServants --> SignOut: System signs out session immediately & shows Smart ID
     
@@ -423,7 +423,7 @@ sequenceDiagram
 3. **Reactive Global Store (`useFestivalStore`):** Serves as the single source of truth for the roster, authenticated servant profile, and daily attendance counters.
 4. **Backend Infrastructure (Supabase):**
    - **PostgreSQL:** Persists relational data (`participants`, `servants`, `attendance_logs`, `points_transactions`, `financial_transactions`, `areas`).
-   - **Auth Engine:** Issues and validates JWTs using synthetic identity mapping (`[teacher_id]@aribsalin.com`).
+   - **Auth Engine:** Issues and validates JWTs using synthetic identity mapping (`[teacher_id]@avabishoy.com`).
    - **Storage Buckets:** Stores uploaded avatar photos in the public `profiles/` bucket.
 
 ---
@@ -626,7 +626,7 @@ src/
 ├── assets/
 │   └── images/                     # Official brand insignias, emblems, and logos
 │       ├── Arebsalin-1.png         # Main festival insignia
-│       ├── aribsalin.jpeg          # Festival backdrop asset
+│       ├── AVA Bishoy.jpeg          # Festival backdrop asset
 │       ├── meni_Logo.png           # St. Mina Church historical insignia
 │       └── new-church-logo.png     # Official St. Mina & Pope Kyrillos VI church crest
 ├── components/
@@ -705,7 +705,7 @@ src/
 Stores brand assets imported as static ES modules:
 * `Arebsalin-1.png`: Circular official festival emblem.
 * `new-church-logo.png`: Crest of the Church of St. Mina & Pope Kyrillos VI.
-* `aribsalin.jpeg` & `meni_Logo.png`: Supplementary historical branding.
+* `AVA Bishoy.jpeg` & `meni_Logo.png`: Supplementary historical branding.
 
 #### 📂 `src/components/auth/`
 * **`AuthInitializer.tsx`:** Orchestrates session startup. Calls `initializeAuth()` and `fetchData()`, attaches Supabase `onAuthStateChange` listeners, renders the global `<Toaster />`, and opens `<WelcomeScreen />` on initial visits.
@@ -808,7 +808,7 @@ The design system combines the spiritual solemnity of Coptic liturgical art with
 
 ```bash
 # 1. Clone repository or navigate to the workspace
-cd D:\Aribsalin\Aribsalin
+cd D:\AVA Bishoy\AVA Bishoy
 
 # 2. Install workspace dependencies via pnpm
 pnpm install
@@ -869,7 +869,7 @@ const smartId = `${prefix}${String(nextNum).padStart(2, '0')}`;
 #### 2. Synthetic Domain Email Authentication Pattern
 To keep login simple for church servants who might not have corporate email addresses, staff log in using their Smart ID (e.g., `A01`, `SP301`). Under the hood, `LoginPage.tsx` synthesizes a virtual domain email:
 ```typescript
-const email = `${teacherId.trim().toLowerCase()}@aribsalin.com`;
+const email = `${teacherId.trim().toLowerCase()}@avabishoy.com`;
 const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 ```
 *Do not prompt servants for standard email addresses unless the synthetic auth layer is refactored across `LoginPage`, `SignupPage`, and Supabase triggers.*
@@ -912,4 +912,4 @@ The codebase has migrated from the legacy monolithic `AppMain.tsx` controller to
 ---
 
 ### Document Maintenance Policy
-This documentation file (`MD/ARIBSALIN-DOCUMENTATION.md`) is the canonical technical blueprint for the Aribsalin repository. Whenever schema modifications, new routes, or business rules are added, this file must be updated in sync. For release history, refer to `MD/CHANGELOG.md`. For digital badge design specs, refer to `MD/ID_CARD_DOCUMENTATION.md`. For the raw database schema snapshot, refer to `MD/schema.md`.
+This documentation file (`MD/AVA Bishoy-DOCUMENTATION.md`) is the canonical technical blueprint for the AVA Bishoy repository. Whenever schema modifications, new routes, or business rules are added, this file must be updated in sync. For release history, refer to `MD/CHANGELOG.md`. For digital badge design specs, refer to `MD/ID_CARD_DOCUMENTATION.md`. For the raw database schema snapshot, refer to `MD/schema.md`.
