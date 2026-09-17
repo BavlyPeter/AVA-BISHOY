@@ -1,8 +1,11 @@
 import { useState, useEffect, useMemo } from 'react';
 import { ArrowRight, Search, Trash2, Coins, Edit, XCircle, User, CalendarCheck } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { toast } from 'sonner';
 import { normalizeArabicText } from '../utils/textUtils';
+import { useFestivalStore } from '../store/useFestivalStore';
+import { ManualPointsModal } from '../components/modals/ManualPointsModal';
 
 export interface ParticipantItem {
   id: string;
@@ -35,8 +38,8 @@ export interface ParticipantItem {
 }
 
 export interface ParticipantsPageProps {
-  participants: ParticipantItem[];
-  onBack: () => void;
+  participants?: ParticipantItem[];
+  onBack?: () => void;
   onViewProfile?: (participantId: string) => void;
   onEdit?: (participant: ParticipantItem) => void;
   onEditRequest?: (participant: ParticipantItem) => void;
@@ -49,7 +52,7 @@ export interface ParticipantsPageProps {
 }
 
 export function ParticipantsPage({
-  participants,
+  participants: propsParticipants,
   onBack,
   onViewProfile,
   onEdit,
@@ -58,9 +61,32 @@ export function ParticipantsPage({
   onDelete,
   onDeleteParticipant,
   onManualAttendance,
-  canEdit = true,
-  canDelete = true
-}: ParticipantsPageProps) {
+  canEdit: propsCanEdit,
+  canDelete: propsCanDelete
+}: ParticipantsPageProps = {}) {
+  const navigate = useNavigate();
+  const { participants: storeParticipants, currentServant, setParticipants, fetchData } = useFestivalStore();
+
+  const userRole = currentServant?.role || 'normal';
+  const canManage = ['admin', 'supervisor'].includes(userRole);
+  const canEdit = propsCanEdit !== undefined ? propsCanEdit : canManage;
+  const canDelete = propsCanDelete !== undefined ? propsCanDelete : canManage;
+
+  const mappedStoreParticipants: ParticipantItem[] = useMemo(() => {
+    return storeParticipants.map((p: any) => ({
+      id: p.participant_id || p.id,
+      participant_id: p.participant_id,
+      dbId: p.id,
+      name: p.name,
+      points: p.points,
+      attended: p.attended,
+      data: p.data,
+      photo_url: p.photo_url
+    }));
+  }, [storeParticipants]);
+
+  const participants = propsParticipants || mappedStoreParticipants;
+
   const [items, setItems] = useState<ParticipantItem[]>(participants);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterYear, setFilterYear] = useState('all');
@@ -68,8 +94,13 @@ export function ParticipantsPage({
   const [filterArea, setFilterArea] = useState('all');
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const handleEdit = onEdit || onEditRequest;
+  const [pointsModalParticipant, setPointsModalParticipant] = useState<any | null>(null);
+
+  const handleBack = onBack || (() => navigate('/dashboard'));
+  const handleViewProfile = onViewProfile || ((id: string) => navigate(`/profile/${id}`));
+  const handleEdit = onEdit || onEditRequest || ((rec: any) => navigate(`/registration?edit=${rec.dbId || rec.id}`));
   const handleDeleteCallback = onDelete || onDeleteParticipant;
+
 
   const [attendanceModalOpen, setAttendanceModalOpen] = useState(false);
   const [attendanceParticipant, setAttendanceParticipant] = useState<ParticipantItem | null>(null);
@@ -147,6 +178,7 @@ export function ParticipantsPage({
       }
 
       setItems(prev => prev.filter(p => p.id !== record.id));
+      setParticipants((prev: any[]) => prev.filter((p: any) => p.id !== participantKey && p.participant_id !== participantKey));
       handleDeleteCallback?.(participantKey);
       toast.success('تم الحذف بنجاح');
     } catch (err) {
@@ -164,7 +196,7 @@ export function ParticipantsPage({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
-              onClick={onBack}
+              onClick={handleBack}
               className="p-2 hover:bg-white/10 rounded-lg active:scale-95 transition-transform"
               title="الرجوع"
             >
@@ -280,7 +312,7 @@ export function ParticipantsPage({
                 {/* Left section in RTL (Avatar & Info) */}
                 <div
                   className="flex items-center gap-3 flex-1 cursor-pointer min-w-0"
-                  onClick={() => onViewProfile?.(participant.dbId || participant.id)}
+                  onClick={() => handleViewProfile(participant.dbId || participant.id)}
                 >
                   {/* Status Indicator */}
                   <div
@@ -339,7 +371,11 @@ export function ParticipantsPage({
                     title="إدارة النقاط"
                     onClick={(e) => {
                       e.stopPropagation();
-                      onManagePoints?.(participant);
+                      if (onManagePoints) {
+                        onManagePoints(participant);
+                      } else {
+                        setPointsModalParticipant(participant);
+                      }
                     }}
                     className="p-2 rounded-lg bg-green-50 text-green-700 hover:bg-green-100 transition-colors"
                   >
@@ -417,8 +453,135 @@ export function ParticipantsPage({
 
             <div className="p-4 border-t border-border flex gap-3">
               <button
-                onClick={() => {
-                  onManualAttendance?.(attendanceParticipant.dbId || attendanceParticipant.id, attendanceDate);
+                onClick={async () => {
+                  const matched = storeParticipants.find((p: any) =>
+                    p.id === attendanceParticipant.dbId ||
+                    p.id === attendanceParticipant.id ||
+                    p.participant_id === attendanceParticipant.participant_id ||
+                    p.participant_id === attendanceParticipant.id
+                  );
+                  const targetCandidate = matched?.id || attendanceParticipant.dbId || attendanceParticipant.id;
+                  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(targetCandidate);
+                  let targetId = targetCandidate;
+                  if (!isUuid) {
+                    const fallback = storeParticipants.find((p: any) => p.participant_id === targetCandidate || p.id === targetCandidate);
+                    if (fallback?.id) {
+                      targetId = fallback.id;
+                    }
+                  }
+
+                  if (onManualAttendance) {
+                    onManualAttendance(targetId, attendanceDate);
+                  } else {
+                    try {
+                      const { data: existingAttendance, error: checkError } = await supabase
+                        .from('attendance_logs')
+                        .select('id')
+                        .eq('participant_id', targetId)
+                        .eq('attendance_date', attendanceDate)
+                        .maybeSingle();
+
+                      if (checkError) {
+                        console.error('Error checking existing attendance log:', checkError);
+                      }
+
+                      if (existingAttendance) {
+                        toast.info('تم تسجيل حضور هذا المخدوم في هذا اليوم مسبقاً');
+                        setAttendanceModalOpen(false);
+                        return;
+                      }
+
+                      const { error: attendanceError } = await supabase
+                        .from('attendance_logs')
+                        .insert({
+                          participant_id: targetId,
+                          servant_id: currentServant?.id || null,
+                          attendance_date: attendanceDate,
+                        });
+
+                      if (attendanceError) {
+                        console.error('Error inserting attendance log into Supabase:', attendanceError);
+                        throw attendanceError;
+                      }
+
+                      const { data: pData, error: balanceError } = await supabase
+                        .from('participants')
+                        .select('points_balance')
+                        .eq('id', targetId)
+                        .single();
+
+                      if (balanceError) {
+                        console.error('Error fetching participant balance from Supabase:', balanceError);
+                      }
+                        
+                      const currentBalance = pData?.points_balance || 0;
+                      const newBalance = currentBalance + 10;
+
+                      const { error: updateError } = await supabase
+                        .from('participants')
+                        .update({ points_balance: newBalance })
+                        .eq('id', targetId);
+
+                      if (updateError) {
+                        console.error('Error updating participant points balance:', updateError);
+                        throw updateError;
+                      }
+
+                      const { error: txError } = await supabase
+                        .from('points_transactions')
+                        .insert({
+                          participant_id: targetId,
+                          servant_id: currentServant?.id || null,
+                          transaction_type: 'addition',
+                          points_amount: 10,
+                          description: `مكافأة حضور يوم ${attendanceDate}`
+                        });
+
+                      if (txError) {
+                        console.error('Error recording points transaction:', txError);
+                      }
+
+                      const today = new Date().toISOString().split('T')[0];
+
+                      // Zustand state mutation using callback signature ensuring no undefined is returned
+                      setParticipants((prev: any[]) =>
+                        (prev || []).map((p: any) => {
+                          if (p?.id === targetId || p?.participant_id === targetId) {
+                            const existingDays = Array.isArray(p.attendanceDays) ? p.attendanceDays : [];
+                            const updatedDays = existingDays.includes(attendanceDate)
+                              ? existingDays
+                              : [...existingDays, attendanceDate];
+                            return {
+                              ...p,
+                              points: newBalance,
+                              attendanceDays: updatedDays,
+                              attended: updatedDays.includes(today),
+                            };
+                          }
+                          return p;
+                        })
+                      );
+
+                      setItems((prev: ParticipantItem[]) =>
+                        (prev || []).map((p: ParticipantItem) => {
+                          if (p?.dbId === targetId || p?.id === targetId) {
+                            return {
+                              ...p,
+                              points: newBalance,
+                              attended: attendanceDate === today ? true : p.attended,
+                            };
+                          }
+                          return p;
+                        })
+                      );
+
+                      toast.success('تم تسجيل الحضور وإضافة 10 نقاط بنجاح');
+                      await fetchData();
+                    } catch (err: any) {
+                      console.error('Manual attendance error in ParticipantsPage:', err);
+                      toast.error(`حدث خطأ أثناء تسجيل الحضور: ${err?.message || 'خطأ غير متوقع'}`);
+                    }
+                  }
                   setAttendanceModalOpen(false);
                 }}
                 className="flex-1 bg-primary text-primary-foreground py-3 rounded-xl font-medium hover:opacity-90 active:scale-95 transition-all"
@@ -434,6 +597,69 @@ export function ParticipantsPage({
             </div>
           </div>
         </div>
+      )}
+
+      {/* Manual Points Modal */}
+      {pointsModalParticipant && (
+        <ManualPointsModal
+          participants={items.map(p => ({
+            id: p.participant_id || p.id,
+            participant_id: p.participant_id,
+            dbId: p.dbId || p.id,
+            name: p.name,
+            points: p.points
+          }))}
+          initialParticipant={{
+            id: pointsModalParticipant.participant_id || pointsModalParticipant.id,
+            participant_id: pointsModalParticipant.participant_id,
+            dbId: pointsModalParticipant.dbId || pointsModalParticipant.id,
+            name: pointsModalParticipant.name,
+            points: pointsModalParticipant.points
+          }}
+          onConfirm={async (participantId, pts, action) => {
+            try {
+              const target = items.find(p => p.id === participantId || p.participant_id === participantId || p.dbId === participantId);
+              const dbId = target?.dbId || target?.id || participantId;
+              const amount = action === 'add' ? pts : -pts;
+
+              const { data: pData, error: fetchError } = await supabase
+                .from('participants')
+                .select('points_balance')
+                .eq('id', dbId)
+                .single();
+
+              if (fetchError) throw fetchError;
+
+              const newBalance = Math.max(0, (pData?.points_balance || 0) + amount);
+
+              const { error: updateError } = await supabase
+                .from('participants')
+                .update({ points_balance: newBalance })
+                .eq('id', dbId);
+
+              if (updateError) throw updateError;
+
+              await supabase
+                .from('points_transactions')
+                .insert([{
+                  participant_id: dbId,
+                  servant_id: currentServant?.id || null,
+                  points_amount: amount,
+                  transaction_type: 'manual',
+                  description: 'تعديل يدوي'
+                }]);
+
+              setItems(prev => prev.map(p => (p.id === dbId || p.dbId === dbId) ? { ...p, points: newBalance } : p));
+              setParticipants((prev: any[]) => prev.map((p: any) => (p.id === dbId) ? { ...p, points: newBalance } : p));
+              toast.success('تم التعديل بنجاح');
+              setPointsModalParticipant(null);
+            } catch (err: any) {
+              console.error('Manual points error:', err);
+              toast.error(`حدث خطأ: ${err.message || 'غير متوقع'}`);
+            }
+          }}
+          onCancel={() => setPointsModalParticipant(null)}
+        />
       )}
     </div>
   );

@@ -1,6 +1,6 @@
 <!-- this a prompt to Update the `ARIBSALIN-DOCUMENTATION.md` file. -->
 
-Act as an Expert Software Architect and Technical Writer. Your task is to deeply analyze the entire codebase of this workspace and Update a comprehensive, definitive master documentation file named `ARIBSALIN-DOCUMENTATION.md`. in `MD/ARIBSALIN-DOCUMENTATION.md`.
+Act as an Expert Software Architect and Technical Writer. Your task is to deeply analyze the entire codebase of this workspace and Update a comprehensive, definitive master documentation file named `ARIBSALIN-DOCUMENTATION.md` in `MD/ARIBSALIN-DOCUMENTATION.md`.
 
 This documentation must be exhaustive, serving as the ultimate guide for any new human developer or AI model joining the project. Do not hallucinate; base all your explanations strictly on the actual files, code, and configuration present in this workspace.
 
@@ -8,15 +8,15 @@ Please execute this task by following these steps:
 
 ### Step 1: Workspace Scanning
 First, silently scan and read the following critical files and directories to understand the project's scope:
-* `package.json`, `pnpm-workspace.yaml`,`vercel.json` and `vite.config.ts` (to determine the tech stack and tools).
-* `src/app/App.tsx` or main router files (to understand routing and portals).
-* `src/contexts/` (to understand global state management).
-* `src/Lib/` (to understand shared utilities and helper functions).
-* `src/pages/` and `src/components/` (to understand the UI structure).
-* `src/types/` (to understand the TypeScript types and interfaces).
-* `src/styles/` (to understand the styling approach and design system).
-* `src/utils/` (to understand the utility functions and helper methods).
-* `/MD` (to understand the documentation structure and Database Schema).
+* @`package.json`, @`pnpm-workspace.yaml`, @`vercel.json` and @`vite.config.ts` (to determine the tech stack and tools).
+* @`src/app/App.tsx` or main router files (to understand routing and portals).
+* @`src/contexts/` (to understand global state management).
+* @`src/Lib/` (to understand shared utilities and helper functions).
+* @`src/pages/` and @`src/components/` (to understand the UI structure).
+* @`src/types/` (to understand the TypeScript types and interfaces).
+* @`src/styles/` (to understand the styling approach and design system).
+* @`src/utils/` (to understand the utility functions and helper methods).
+* @`/MD` (to understand the documentation structure and Database Schema).
 
 ### Step 2: Update `ARIBSALIN-DOCUMENTATION.md`
 Based on your analysis, Update a beautifully formatted Markdown file containing the following exact sections:

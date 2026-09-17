@@ -1,115 +1,89 @@
-# اريبصالين (Aribsalin) - Summer Festival Management System
-## Definitive Master Technical Documentation & Architecture Manual
+# اريبصالين (Aribsalin) - Summer Festival & Sunday School Management System
+## Definitive Master Technical Architecture & Developer Reference Manual
 
-**System Version:** `1.7.0` (Granular Attendance, RBAC Scoping, Directory Accessibility, Session Batching & Digital Badging)  
-**Target Platform:** Mobile-First Responsive Web Application / PWA  
-**Language & Direction:** Arabic (`ar`) / Right-to-Left (`dir="rtl"`)  
+**System Version:** `2.0.0` (URL-Based Routing, Global Zustand Store, Granular RBAC, Smart ID Gap-Filling, Offline-Safe Scanning & Digital Badging)  
+**Target Platform:** Mobile-First Responsive Web Application / PWA-Ready  
+**Primary Language & Direction:** Arabic (`ar`) / Right-to-Left (`dir="rtl"`)  
 **Parish / Organization:** Church of the Great Martyr St. Mina the Wonderworker & Pope Kyrillos VI - Aswan  
+**Repository Working Directory:** `D:\Aribsalin\Aribsalin`  
+**Documentation Path:** `MD/ARIBSALIN-DOCUMENTATION.md`  
 **Last Revised:** September 2026  
 
 ---
 
 ## Table of Contents
-- [1. Project Idea & Concept](#1-project-idea--concept)
-  - [Executive Summary](#executive-summary)
-  - [Core Business Problems Solved](#core-business-problems-solved)
-  - [Domain Mechanics & Gamification](#domain-mechanics--gamification)
-- [2. Tech Stack & Tooling](#2-tech-stack--tooling)
-  - [Core Stack Inventory](#core-stack-inventory)
-  - [Architectural Rationale: Why These Tools?](#architectural-rationale-why-these-tools)
-  - [Configuration & Build Pipeline](#configuration--build-pipeline)
-- [3. User Roles & Workflows](#3-user-roles--workflows)
-  - [Role-Based Access Control (RBAC) Matrix](#role-based-access-control-rbac-matrix)
-  - [Portals & Experience Design](#portals--experience-design)
-    - [1. Student / Participant Portal (`studentPortal`)](#1-student--participant-portal-studentportal)
-    - [2. Normal Servant Portal (`dashboard` with `normal` role)](#2-normal-servant-portal-dashboard-with-normal-role)
-    - [3. Class Supervisor Portal (`dashboard` with `supervisor` role)](#3-class-supervisor-portal-dashboard-with-supervisor-role)
-    - [4. Administrator Portal (`dashboard` with `admin` role)](#4-administrator-portal-dashboard-with-admin-role)
-  - [End-to-End Workflow Specifications](#end-to-end-workflow-specifications)
-    - [Workflow A: Participant Registration & Smart ID Gap-Filling](#workflow-a-participant-registration--smart-id-gap-filling)
-    - [Workflow B: QR Attendance Check-in with Conflict Prevention](#workflow-b-qr-attendance-check-in-with-conflict-prevention)
-    - [Workflow C: Marketplace Redemption with Overdraft Guard](#workflow-c-marketplace-redemption-with-overdraft-guard)
-    - [Workflow D: Staff Onboarding & Approval Lifecycle](#workflow-d-staff-onboarding--approval-lifecycle)
-    - [Workflow E: Unified Participants Directory Access](#workflow-e-unified-participants-directory-access)
-- [4. Architecture & State Management](#4-architecture--state-management)
-  - [Application Lifecycle & Centralized State Hub](#application-lifecycle--centralized-state-hub)
-  - [Virtual State Domains (In-Memory State Hub Architecture)](#virtual-state-domains-in-memory-state-hub-architecture)
-    - [1. Auth & Identity Domain](#1-auth--identity-domain)
-    - [2. Festival Data & Roster Domain](#2-festival-data--roster-domain)
-    - [3. View Routing & Navigation State Machine](#3-view-routing--navigation-state-machine)
-    - [4. Hardware & QR Scanner Domain](#4-hardware--qr-scanner-domain)
-    - [5. Modals & Mutations Domain](#5-modals--mutations-domain)
-  - [Data Flow & Relational Integrity](#data-flow--relational-integrity)
-  - [Database Schema Specification (Supabase PostgreSQL)](#database-schema-specification-supabase-postgresql)
-- [5. Folder Structure & Deep Dive](#5-folder-structure--deep-dive)
-  - [Source Tree (ASCII)](#source-tree-ascii)
-  - [Directory-by-Directory Deep Dive](#directory-by-directory-deep-dive)
-    - [📂 `src/app/`](#-srcapp)
-    - [📂 `src/components/layout/`](#-srccomponentslayout)
-    - [📂 `src/components/forms/`](#-srccomponentsforms)
-    - [📂 `src/components/modals/`](#-srccomponentsmodals)
-    - [📂 `src/components/shared/`](#-srccomponentsshared)
-    - [📂 `src/components/ui/`](#-srccomponentsui)
-    - [📂 `src/lib/`](#-srclib)
-    - [📂 `src/pages/`](#-srcpages)
-    - [📂 `src/styles/`](#-srcstyles)
-    - [📂 `src/types/`](#-srctypes)
-    - [📂 `src/utils/`](#-srcutils)
-- [6. Developer Guide: How to Work on This Project](#6-developer-guide-how-to-work-on-this-project)
-  - [Design System & UI/UX Governance](#design-system--uiux-governance)
-    - [Aesthetic Philosophy: The Coptic Heritage Palette](#aesthetic-philosophy-the-coptic-heritage-palette)
-    - [Strict Frontend Implementation Rules](#strict-frontend-implementation-rules)
-  - [Local Development Setup](#local-development-setup)
-    - [Prerequisites](#prerequisites)
-    - [Installation & Execution Commands](#installation--execution-commands)
-    - [Production Build & Verification](#production-build--verification)
-  - [Critical Architectural Invariants & Edge Cases](#critical-architectural-invariants--edge-cases)
-    - [1. Smart ID Gap-Filling Algorithm](#1-smart-id-gap-filling-algorithm)
-    - [2. Synthetic Email Authentication for Staff](#2-synthetic-email-authentication-for-staff)
-    - [3. iOS Safari Camera Freeze Prevention](#3-ios-safari-camera-freeze-prevention)
-    - [4. Supabase PostgREST URL Length Limits (200-Chunk Batches)](#4-supabase-postgrest-url-length-limits-200-chunk-batches)
-    - [5. `html2canvas` Color & Rendering Constraints](#5-html2canvas-color--rendering-constraints)
-    - [6. Dynamic RBAC Guarding on Participants Directory](#6-dynamic-rbac-guarding-on-participants-directory)
-  - [Document Maintenance Note](#document-maintenance-note)
+1. [Project Idea & Concept](#1-project-idea--concept)
+   - [Executive Summary](#executive-summary)
+   - [Core Business Problems Solved](#core-business-problems-solved)
+   - [Domain Mechanics & Gamification Engine](#domain-mechanics--gamification-engine)
+2. [Tech Stack & Tooling](#2-tech-stack--tooling)
+   - [Core Technology Inventory](#core-technology-inventory)
+   - [Architectural Rationale: Why These Tools?](#architectural-rationale-why-these-tools)
+   - [Build Pipeline & Configuration Specs](#build-pipeline--configuration-specs)
+3. [User Roles & Workflows](#3-user-roles--workflows)
+   - [User Roles Inventory & RBAC Matrix](#user-roles-inventory--rbac-matrix)
+   - [Portals & Experience Design](#portals--experience-design)
+   - [End-to-End Operational Workflows](#end-to-end-operational-workflows)
+4. [Architecture & State Management](#4-architecture--state-management)
+   - [End-to-End System Data Flow](#end-to-end-system-data-flow)
+   - [State Management Architecture: Zustand vs. Context](#state-management-architecture-zustand-vs-context)
+   - [Session Management & Boundary Components](#session-management--boundary-components)
+   - [Data Ingestion & In-Memory Stitching Pattern](#data-ingestion--in-memory-stitching-pattern)
+   - [Database Schema Specification (Supabase PostgreSQL)](#database-schema-specification-supabase-postgresql)
+5. [Folder Structure & Deep Dive](#5-folder-structure--deep-dive)
+   - [ASCII Directory Tree](#ascii-directory-tree)
+   - [Major Directory & Key File Deep Dive](#major-directory--key-file-deep-dive)
+6. [Developer Guide: How to Work on This Project](#6-developer-guide-how-to-work-on-this-project)
+   - [Design System & UI/UX Governance](#design-system--uiux-governance)
+   - [Local Development Setup](#local-development-setup)
+   - [Production Verification & Deployment](#production-verification--deployment)
+   - [The 7 Critical Architectural Invariants & Edge Cases](#the-7-critical-architectural-invariants--edge-cases)
+   - [Document Maintenance Policy](#document-maintenance-policy)
 
 ---
 
 ## 1. Project Idea & Concept
 
 ### Executive Summary
-**اريبصالين (Aribsalin)** is an enterprise-grade, mobile-first festival and Sunday school management system engineered for the **Church of the Great Martyr St. Mina and Pope Kyrillos VI in Aswan**. Built as a high-performance single-page application (SPA), the system digitizes and centralizes participant enrollment, QR badge generation, attendance tracking, gamified reward points, marketplace redemptions, staff credentialing, financial accounting, and demographic analytics across all educational stages (from Kindergarten through University and Graduates).
+**اريبصالين (Aribsalin)** is an enterprise-grade, mobile-first festival, Sunday school, and church ministry management system engineered specifically for the **Church of the Great Martyr St. Mina the Wonderworker & Pope Kyrillos VI in Aswan, Egypt**. Built as a reactive single-page application (SPA), the platform digitizes and unifies the operational lifecycle of summer deacon programs, spiritual festivals, and weekly youth services across all educational cohorts—from Kindergarten (`حضانة`) through University and Graduates (`جامعيين وخريجين`).
 
-The name *Aribsalin* derives from the Coptic hymnological tradition (meaning *"Chant / Sing"* - أريبصالين), honoring the spiritual, educational, and community foundations of the church festival.
+The name **Aribsalin** originates in the Coptic hymnological tradition (from Coptic: ⲁⲣⲓⲯⲁⲗⲓⲛ, meaning *"Chant"* or *"Sing hymns"* — أريبصالين), honoring the spiritual, liturgical, and pedagogical roots of the church's annual summer festival.
 
 ```
        +-------------------------------------------------------------+
        |                  اريبصالين (Aribsalin)                     |
-       |             Festival & Sunday School Engine                 |
+       |         Church Festival & Sunday School Engine              |
        +-------------------------------------------------------------+
-                                      |
-         +----------------------------+----------------------------+
-         |                                                         |
-         v                                                         v
+                                       |
+          +----------------------------+----------------------------+
+          |                                                         |
+          v                                                         v
 +-------------------------------+                         +-------------------------------+
 |       Student Portal          |                         |       Servant Portal          |
 |  - Smart ID / QR Badge Access |                         |  - Multi-tier RBAC (Admin,    |
 |  - Points & Attendance Gauges |                         |    Supervisor, Normal)        |
 |  - Transaction Ledger History |                         |  - High-Speed QR Scanner      |
-|  - Digital ID Card PNG Export |                         |  - Directory, Treasury & Stats|
+|  - Digital ID Card PNG Export |                         |  - Treasury, Sessions & Stats |
 +-------------------------------+                         +-------------------------------+
 ```
 
 ### Core Business Problems Solved
-Traditional youth festivals, summer academies, and church schools face severe operational bottlenecks when relying on physical paper rosters, token cards, and decentralized communication:
+Traditional parish festivals, youth camps, and Sunday schools operate under intense arrival pressures, managing hundreds of children and teenagers within narrow check-in windows. Previously reliant on paper rosters, physical stamp cards, and fragmented cash logs, operations suffered from recurring systemic failures:
 
-1. **Slow & Inaccurate Morning Check-ins:** Manual roll-calls for hundreds of students during high-traffic morning arrivals create long queues and lost session time. Aribsalin resolves this via **hardware camera and screenshot-based QR badge scanning** that logs check-ins in under 300 milliseconds.
-2. **Attendance Fraud & Duplicate Claims:** Physical paper cards and stamp systems are prone to tampering or multiple claims on the same day. The system enforces strict database constraints (`unique_daily_attendance`) and in-memory verification: exactly one check-in per student per calendar date (`attendance_date`).
-3. **Loss of Participant Physical Badges:** Paper badges degrade, get lost, or are forgotten at home. Aribsalin provides **dynamic digital badges** with client-side PNG rendering and printable PDF compilation, allowing students and parents to retrieve credentials instantly via mobile or print replacements on demand.
-4. **Disorganized Economy & Rewards:** Incentive systems (points for memorization, attendance, good conduct) become difficult to audit when tracked in paper notebooks. Aribsalin features a **double-entry points ledger** (`points_transactions`) with debit validation in the festival market, preventing overdrafts.
-5. **Decentralized Multi-Stage Management:** Different educational stages (Kindergarten, Primary, Preparatory, Secondary, University/Graduates) operate semi-autonomously. Supervisors require visibility into their assigned cohort without exposing or corrupting other classes' data.
-6. **Financial Opacity:** Managing festival expenditures (gifts, prizes, transportation, catering, stage assets) against revenues requires auditable accounting. The integrated **Finance Ledger** connects transactions to stages, dates, and supervisors.
+1. **Morning Arrival Bottlenecks:**  
+   Manual paper roll-calls for hundreds of arriving participants produced queues, congestion, and delays to morning prayer and liturgy. Aribsalin provides **hardware camera and screenshot-based QR badge scanning** that parses credentials, writes attendance logs, awards points, and updates state in under **300 milliseconds**.
+2. **Attendance Fraud & Duplicate Claims:**  
+   Physical punch cards and paper check-ins are easily duplicated, forged, or stamped multiple times in a single day. Aribsalin enforces an atomic PostgreSQL unique constraint (`unique_daily_attendance` on `participant_id` and `attendance_date`), strictly blocking duplicate check-in credits on the same calendar day.
+3. **Loss of Physical Badges:**  
+   Children frequently lose, damage, or forget physical paper badges. Aribsalin generates **dynamic digital ID cards** rendered client-side (350x550px) that can be downloaded as high-resolution PNGs directly onto student smartphones, or compiled by church leaders into printable, batch-processed PDF card decks.
+4. **Disorganized Reward Economy:**  
+   Points awarded for scripture memorization, hymn recitation, attendance, and good behavior were previously recorded in personal notebooks, causing disputes during festival marketplace prize redemptions. Aribsalin provides an immutable, append-only **double-entry points ledger** (`points_transactions`) with strict balance validation that prevents overdrafts during marketplace redemptions.
+5. **Decentralized Multi-Stage Management:**  
+   Church cohorts (Kindergarten, Primary 1–2, Primary 3–4, Primary 5–6, Preparatory, Secondary, University/Graduates) have distinct supervisors. Class supervisors need immediate visibility into their cohort's attendance, point distribution, and member profiles without corrupting or modifying data from other stages.
+6. **Financial Opacity & Fragmented Expenses:**  
+   Tracking expenses (catering, transport, audio gear, trophies, prizes) against donations and enrollment fees was historically done on disjointed paper receipts. The integrated **Treasury Ledger (`/finance`)** links financial records directly to specific educational stages, transaction dates, and responsible servants.
 
-### Domain Mechanics & Gamification
+### Domain Mechanics & Gamification Engine
 
 ```
 +---------------------------------------------------------------------------------------+
@@ -125,119 +99,129 @@ Traditional youth festivals, summer academies, and church schools face severe op
 |                     +--> 1. INSERT INTO attendance_logs (scanned_at, servant_id)      |
 |                     +--> 2. UPDATE participants.points_balance (+10 points)           |
 |                     +--> 3. INSERT INTO points_transactions ('attendance_bonus', +10)|
-|                     +--> 4. Optimistic UI update (State reflection in <100ms)         |
+|                     +--> 4. Optimistic Store Update (Reflects in UI < 50ms)           |
 +---------------------------------------------------------------------------------------+
 ```
 
-* **Automatic Attendance Reward:** Each valid attendance scan immediately credits the participant with **+10 points** and records an audit log in `points_transactions`.
-* **Compensating Rollback on Deletion:** When an admin or supervisor removes an attendance session, the engine deducts **10 points** (bounded at a zero floor via `Math.max(0, current - 10)`) and records a `deduction` audit entry.
-* **Marketplace Purchases:** Points can be spent at festival market stalls. Transactions are blocked if the requested debit exceeds the participant's current balance.
-* **Bonus & Custom Adjustments:** Servants can grant ad-hoc points for hymns, spiritual competitions, or behavior, with mandatory description logging.
+* **Automated Attendance Credit:** Every valid attendance scan registers an audit row in `attendance_logs`, adds **+10 points** to the participant's `points_balance`, and creates a ledger entry in `points_transactions` with `transaction_type = 'attendance_bonus'`.
+* **Compensating Rollback on Deletion:** When a supervisor or administrator deletes a participant's attendance log for a given date, the system executes an automated compensating transaction: it decrements **10 points** (clamped to a zero floor: `Math.max(0, current - 10)`), writes a `deduction` transaction to `points_transactions`, and updates the global cache.
+* **Festival Marketplace Purchases:** Accumulated points act as festival currency. At the festival shop/market, servants scan the student's badge, specify the cost, and the system executes an overdraft-guarded debit. Insufficient balances trigger immediate user-facing error toasts.
+* **Ad-Hoc Bonus Rewards:** Servants can grant custom point increments (for hymn mastery, Bible study competitions, or altar service) via scan or manual search modals.
 
 ---
 
 ## 2. Tech Stack & Tooling
 
-### Core Stack Inventory
+### Core Technology Inventory
 
-| Domain | Technology / Package | Exact Version | Architectural Purpose in Codebase |
+| Technology / Library | Version | Category | Architectural Purpose in Aribsalin |
 |---|---|---|---|
-| **Core Framework** | React | `18.3.1` | Component-based UI, custom hooks, and virtual DOM rendering. |
-| **Language & Typing** | TypeScript | `~5.x` | Strict compile-time type safety for domain models (`StudentData`, `Participant`, `TeacherData`). |
-| **Bundler & Dev Server** | Vite | `6.3.5` | Instant HMR, ESM bundling, path aliases (`@/`), and asset plugins. |
-| **Styling Framework** | Tailwind CSS (v4) | `4.1.12` | Next-generation CSS engine using native CSS variables (`@theme inline`) with zero runtime overhead. |
-| **Component Primitives** | Radix UI | Various | Accessible, headless UI foundations (Dialog, Select, DropdownMenu, Tabs, Popover, Tooltip). |
-| **UI Library Extensions** | Material UI (MUI) | `7.3.5` | Supporting design components and icons (`@mui/icons-material`). |
-| **Database & Auth** | `@supabase/supabase-js` | `^2.106.2` | Managed PostgreSQL database, JWT authentication, and S3-compatible file storage. |
-| **QR Code Generation** | `qrcode.react` | `^4.2.0` | High-density SVG/Canvas QR generation with Level-H error correction for badges. |
-| **QR Code Decoding** | `html5-qrcode` | `^2.3.8` | Resilient camera stream decoder and lossless canvas file screenshot analyzer. |
-| **Canvas & PDF Export** | `html2canvas` & `jspdf` | `^1.4.1` / `^4.2.1` | Client-side DOM-to-Canvas rasterization and multi-page batch PDF booklet generation. |
-| **Data Visualization** | `recharts` | `^2.15.2` | Responsive SVG charts (LineChart, BarChart, PieChart) for demographics and finances. |
-| **Notifications** | `sonner` | `2.0.3` | Lightweight, stackable, RTL-compatible toast notification system. |
-| **Iconography** | `lucide-react` | `0.487.0` | Tree-shakeable SVG icons representing system workflows. |
-| **Package Manager** | `pnpm` | Workspace | Fast, disk-efficient package management with strict dependency isolation. |
-| **Hosting & CI/CD** | Vercel | Static Build | Global edge CDN deployment using `@vercel/static-build` configured via `vercel.json`. |
+| **React** | `18.3.1` | UI Library | Component lifecycle, hooks, and virtual DOM rendering. |
+| **TypeScript** | `~5.6.2` | Language | Strict type definitions (`StudentData`, `Participant`, `TeacherData`). |
+| **React Router DOM** | `^7.18.3` | Routing | URL-based routing, route guards (`RoleGuard`), code-splitting (`lazy`/`Suspense`). |
+| **Zustand** | `^5.0.15` | State Management | Reactive global store (`useFestivalStore`) providing fine-grained subscription without re-render cascades. |
+| **Vite** | `6.3.5` | Bundler & Dev Server | Fast HMR, ES module bundling, path aliasing (`@/` -> `src/`), custom asset plugins. |
+| **Tailwind CSS** | `4.1.12` | CSS Engine | Modern CSS framework utilizing `@theme inline` and native CSS custom properties. |
+| **Radix UI** | `1.x - 2.x` | UI Primitives | Unstyled, accessible UI foundations (Dialog, DropdownMenu, Select, Tabs, Popover, Tooltip, Accordion). |
+| **Lucide React** | `0.487.0` | Iconography | Tree-shakeable SVG icons tailored for RTL Arabic layouts. |
+| **`@supabase/supabase-js`** | `^2.106.2` | Backend-as-a-Service | PostgreSQL database, JWT authentication, and S3-compatible profile photo storage. |
+| **`html5-qrcode`** | `^2.3.8` | QR Decoding | Hardware video stream decoding and isolated screenshot canvas analysis. |
+| **`qrcode.react`** | `^4.2.0` | QR Generation | Level-H error-correcting SVG/Canvas QR code generation for digital badges. |
+| **`html2canvas`** | `^1.4.1` | DOM Rasterization | High-resolution rasterization of digital badges at 2x scale for PNG and PDF exports. |
+| **`jspdf`** | `^4.2.1` | Document Generation | Client-side compilation of multi-page printable card decks (`[350, 550] px`). |
+| **`recharts`** | `^2.15.2` | Data Visualization | Responsive SVG charts (BarChart, PieChart, LineChart) for analytics and treasury metrics. |
+| **`sonner`** | `2.0.3` | Notifications | Stackable, RTL-compatible Arabic toast notifications. |
+| **`pnpm`** | Workspace | Package Manager | Fast, deterministic dependency resolution with symlinked workspace storage. |
+| **Vercel** | Edge Static | Hosting & CI/CD | Production edge delivery configured via `@vercel/static-build` in `vercel.json`. |
 
 ### Architectural Rationale: Why These Tools?
 
-1. **Vite 6 + Tailwind CSS v4:**  
-   Tailwind v4's direct CSS engine eliminates `tailwind.config.js` in favor of `@theme inline` in `src/styles/theme.css`. Combined with Vite's `@tailwindcss/vite` plugin, builds achieve sub-second rebuilds. A custom plugin (`figmaAssetResolver`) in `vite.config.ts` handles asset namespaces seamlessly.
-2. **Supabase (PostgreSQL + Auth + Storage):**  
-   Eliminates the complexity and maintenance of a custom backend server. Provides row-level security (RLS), real-time capabilities, persistent storage buckets (`profiles/`), and reliable ACID transactions for financial and attendance records.
-3. **html5-qrcode with Custom Optimizations:**  
-   Camera feeds across mobile web browsers (especially Safari on iOS) frequently suffer from video track suspension when browser APIs like `navigator.vibrate` are called. The codebase utilizes a hardened implementation with vibration suppression and an isolated off-screen file scanner canvas (`#file-qr-reader`).
-4. **Client-Side Document Synthesis (`html2canvas` + `jsPDF`):**  
-   Church administrators need to print 500+ student badges without bogging down server bandwidth. By rendering batches of 8 cards in an off-screen DOM canvas at 2x scale and appending them to a 350x550px PDF page, the browser produces crisp printouts entirely on the client.
-5. **Recharts with Guarded Dimensions:**  
-   Analytics dashboards render dynamic demographics. The implementation wraps data sets in `useMemo` hooks with safe zero-value fallbacks to prevent runtime crashes when an educational stage has zero recorded attendance.
+1. **React 18 + React Router DOM v7:**  
+   The application requires fast transitions on low-power mobile devices. React Router v7 combined with `lazy()` and `<Suspense fallback={<LoadingFallback />}>` ensures that heavy analytical dependencies (`recharts`, `jspdf`, `html2canvas`) are loaded only when the user enters specific administrative pages, keeping the initial QR scanner bundle lightweight.
+2. **Zustand 5 for Global State:**  
+   Traditional React Context re-renders every consuming component whenever any slice of context updates. In high-frequency operations (such as scanning 200 children in 20 minutes), context re-renders degrade camera frame rates. Zustand's atomic selector subscriptions (`useFestivalStore(state => state.currentServant)`) ensure that camera streams and scan counters render independently at 60 FPS.
+3. **Tailwind CSS v4 with `@theme inline`:**  
+   Tailwind v4 replaces legacy JavaScript config files with pure CSS theme definitions. By binding design tokens to native CSS variables (`--primary`, `--secondary`, `--background`, `--foreground`), theme tokens are computed at runtime by the browser with zero JS overhead.
+4. **Supabase PostgreSQL & Storage:**  
+   Eliminates backend infrastructure management while providing PostgreSQL ACID guarantees, relational integrity, row-level security, and persistent storage buckets (`profiles/`) for participant avatars.
+5. **Hardened Dual-Instance QR Engine (`html5-qrcode`):**  
+   Mobile web browsers behave inconsistently when cameras switch between live video capture and file upload analysis. Aribsalin runs an active live scanner on `#qr-reader` and boots an isolated off-screen scanner instance on `#file-qr-reader` for image uploads, disabling image smoothing to maintain sharp pixel edges for QR recognition.
+6. **Client-Side Document Synthesis (`html2canvas` + `jsPDF`):**  
+   Printing badges for 400+ participants on church servers creates heavy CPU and bandwidth spikes. Generating high-resolution cards directly within the administrator's browser in micro-batches of 8 offloads 100% of rendering to the client.
 
-### Configuration & Build Pipeline
+### Build Pipeline & Configuration Specs
 
-* **`package.json` Scripts:**
-  - `pnpm dev`: Boots the local Vite development server with HMR.
-  - `pnpm build`: Runs Vite production build, outputting optimized bundles to `dist/`.
-* **Path Aliasing (`vite.config.ts`):**
-  - `@/` maps directly to `src/` for clean imports.
-  - Custom assets included: `.svg`, `.csv`.
-* **Deployment Spec (`vercel.json`):**
-  - Uses `@vercel/static-build` targeting the `dist` directory with client-side SPA routing fallbacks.
+* **`vite.config.ts`:**
+  - `@/` resolves to `./src`.
+  - Custom plugin `figmaAssetResolver()` maps `figma:asset/*` imports directly to `src/assets/*`.
+  - `assetsInclude` allows raw asset imports of `.svg` and `.csv`.
+* **`pnpm-workspace.yaml`:**
+  - Defines root workspace packages and suppresses unnecessary native builds (`@tailwindcss/oxide`, `core-js`, `esbuild`).
+* **`vercel.json`:**
+  - Directs builds through `@vercel/static-build` with output targeting the `dist` directory.
 
 ---
 
 ## 3. User Roles & Workflows
 
-### Role-Based Access Control (RBAC) Matrix
+### User Roles Inventory & RBAC Matrix
 
-The system features four distinct participant and staff roles:
+The system enforces four distinct user tiers across all views and data mutations:
 
-| Feature / Action | Student / Participant (`student`) | Normal Servant (`normal`) | Class Supervisor (`supervisor`) | Admin / General (`admin`) |
+| Feature / Capability | Student / Participant (`student`) | Normal Servant (`normal`) | Class Supervisor (`supervisor`) | Service Administrator (`admin`) |
 |---|:---:|:---:|:---:|:---:|
-| **Access Gateway** | Student Portal (Smart ID / QR) | Staff Login (`T-ID` + Pass) | Staff Login (`T-ID` + Pass) | Staff Login (`T-ID` + Pass) |
-| **View Own Points & Profile** | Read-Only | Read-Only | Read-Only | Read-Only |
-| **Download Own ID Card (PNG)** | Yes | Yes (from profile) | Yes | Yes |
-| **Scan Badges (Attendance / +10 pts)** | No | Yes (All Classes) | Yes (All Classes) | Yes (All Classes) |
-| **Scan Badges (Market Deductions)** | No | Yes (With Balance Check) | Yes | Yes |
-| **Scan Badges (Add Bonus Points)** | No | Yes | Yes | Yes |
-| **Access Participants Directory ("سجل المشاركين")** | No | Yes (Read / Attendance / Points) | Yes (Full CRUD) | Yes (Full CRUD) |
+| **Entry Gateway** | `/student-portal` | `/login` | `/login` | `/login` |
+| **Authentication Credential** | Smart ID or Badge QR | `T-ID` + Password | `T-ID` + Password | `T-ID` + Password |
+| **View Personal Points & Attendance** | Read-Only | Read-Only | Read-Only | Read-Only |
+| **Export Personal Digital ID Card (PNG)** | Yes (`/profile/:id`) | Yes | Yes | Yes |
+| **QR Attendance Scanning (+10 pts)** | No | Yes (All Stages) | Yes (All Stages) | Yes (All Stages) |
+| **QR Marketplace Point Deductions** | No | Yes (Balance Checked) | Yes (Balance Checked) | Yes (Balance Checked) |
+| **QR Bonus Points Allocation** | No | Yes | Yes | Yes |
+| **Browse Participants Directory (`/participants`)** | No | Yes (Read / Attendance / Points) | Yes (Full CRUD) | Yes (Full CRUD) |
 | **Manual Points Adjustment Modal** | No | Yes (via Directory) | Yes | Yes |
-| **Manual Retroactive Attendance** | No | Yes (via Directory) | Yes (Date Picker) | Yes (Date Picker) |
-| **Edit Participant Data** | No | No | Yes (Scoped) | Yes (All Stages) |
-| **Delete Participant** | No | No | Yes (Scoped) | Yes (All Stages) |
-| **Delete Single Attendance Log** | No | No | Yes (Own Stage) | Yes (All Stages) |
-| **Stage Scoped Statistics** | No | No | Yes (Auto-filtered) | Yes (Global + Filters) |
-| **Bulk ID Cards PDF Export** | No | No | No | Yes (Multi-Stage) |
-| **Registration Requests Review** | No | No | No | Yes (Approve / Reject) |
-| **Teachers Directory & Editing** | No | No | No | Yes (Full Roster) |
-| **Macro Session Batch Deletion** | No | No | No | Yes (200-Chunk Batches) |
-| **Finance & Treasury Ledger** | No | No | No | Yes (Revenues / Expenses) |
+| **Manual Retroactive Attendance Check-in** | No | Yes (via Directory) | Yes | Yes |
+| **Register New Participants (`/registration`)** | No | No | Yes (Class Scoped) | Yes (All Stages) |
+| **Edit Participant Information (`?edit=:id`)** | No | No | Yes (Class Scoped) | Yes (All Stages) |
+| **Delete Participant Record** | No | No | Yes (Class Scoped) | Yes (All Stages) |
+| **Delete Single Attendance Log (Rollback)** | No | No | Yes (Compensating -10 pts) | Yes (Compensating -10 pts) |
+| **View Analytics & Demographics (`/statistics`)** | No | No | Yes (Stage Filtered) | Yes (Global Festival) |
+| **Manage Treasury & Cash Flow (`/finance`)** | No | No | No | Yes (Revenues / Expenses) |
+| **Macro Session Attendance Wipe (`/sessions`)** | No | No | No | Yes (200-Batch Safe) |
+| **Servant Registration Review (`/requests`)** | No | No | No | Yes (Approve / Reject) |
+| **Servants Directory (`/teachers`)** | No | No | No | Yes (Grouped by Stage) |
+| **Bulk Printable ID Cards PDF Export** | No | No | No | Yes (Multi-Stage Batch) |
 
 ---
 
 ### Portals & Experience Design
 
-#### 1. Student / Participant Portal (`studentPortal`)
-* **Target Audience:** Festival youth and their guardians.
-* **Authentication:** Zero-friction login requiring no password. The student enters their human-readable Smart ID (e.g., `P301`, `K002`) or scans their physical badge using the device camera (`studentScanner`).
-* **Experience:** Displays the student's photo, age, confession father, educational stage, real-time points gauge, percentage attendance circular meter, detailed chronological attendance log, and an action to download their digital badge as a high-resolution PNG.
+#### 1. Student / Participant Portal
+* **Primary Route:** `/student-portal`  
+* **Target Audience:** Sunday school children, youth participants, and their parents.
+* **Access Model:** Zero-friction login requiring no password. The student types their human-readable Smart ID (e.g., `P301`, `K002`) or scans their printed badge via webcam (`/scanner?mode=viewDetails`).
+* **Experience (`/profile/:id`):** Displays the student's avatar photo, age, confession father, educational stage, real-time points gauge, circular attendance percentage gauge, chronological attendance history, and an action to download their digital badge as a high-resolution PNG.
 
-#### 2. Normal Servant Portal (`dashboard` with `normal` role)
-* **Target Audience:** Service teachers assisting with event operations.
-* **Authentication:** Login via assigned Teacher Smart ID (e.g., `NP101`) and password. Requires prior approval by the administrator.
-* **Experience:** Fast-action mobile interface prioritizing QR scanner workflows (Attendance check-in, Market checkout, Bonus points, Participant lookup) and full access to the **Participants Directory ("سجل المشاركين")** to search participants, record manual attendance, and manage points. Edit and delete permissions are disabled for this role.
+#### 2. Normal Servant Portal
+* **Primary Route:** `/login` -> `/dashboard`  
+* **Target Audience:** Sunday school teachers, hymn instructors, and activity leaders.
+* **Access Model:** Authenticates using their Teacher Smart ID (e.g., `NP101`) and password. Requires prior administrative approval (`status = 'approved'`).
+* **Experience:** Mobile-first dashboard focused on high-frequency QR scanning (Attendance, Market, Add Points, View Details). Has full access to the **Participants Directory ("سجل المشاركين" at `/participants`)** to search participants, record manual attendance, and adjust points. Edit and delete mutations are hidden from this role.
 
-#### 3. Class Supervisor Portal (`dashboard` with `supervisor` role)
-* **Target Audience:** Stage leaders (أمين فصل) responsible for a specific cohort (e.g., Primary 3 & 4).
-* **Authentication:** Login via Supervisor Smart ID (e.g., `SP301`).
-* **Experience:** In addition to scanner tools, supervisors receive participant enrollment forms with automatic Smart ID allocation, a manual attendance calendar to record retroactive check-ins, participant editing and deletion permissions, attendance log deletion with automated point rollbacks, manual point modifiers, and stage-isolated analytics.
+#### 3. Class Supervisor Portal
+* **Primary Route:** `/login` -> `/dashboard`  
+* **Target Audience:** Grade supervisors (أمين فصل) managing a specific educational cohort (e.g., Primary 3 & 4).
+* **Access Model:** Authenticates via Supervisor Smart ID (e.g., `SP301`).
+* **Experience:** All Normal Servant scanning tools plus enrollment access (`/registration`), editing rights, deletion capabilities, attendance log deletion with automated 10-point rollback, and a dedicated **Statistics Page (`/statistics`)** that automatically isolates metrics to their assigned educational stage (`class_stage`).
 
-#### 4. Administrator Portal (`dashboard` with `admin` role)
-* **Target Audience:** Head of service (أمين الخدمة) and system administrators.
-* **Authentication:** Login via Admin Smart ID (e.g., `A01`).
-* **Experience:** Full management suite containing the Financial Ledger, Staff Approvals board, Bulk PDF Card Generation suite, Macro Sessions manager, and global statistical charts.
+#### 4. Administrator Portal
+* **Primary Route:** `/login` -> `/dashboard`  
+* **Target Audience:** General Sunday school leaders (أمين الخدمة), parish priests, and head coordinators.
+* **Access Model:** Authenticates via Admin Smart ID (e.g., `A01`).
+* **Experience:** Full system management suite containing the **Financial Ledger (`/finance`)**, **Staff Approvals Board (`/requests`)**, **Staff Directory (`/teachers`)**, **Macro Session Wipe Manager (`/sessions`)**, and **Bulk Printable PDF ID Generator (`BulkIDDownloadModal`)**.
 
 ---
 
-### End-to-End Workflow Specifications
+### End-to-End Operational Workflows
 
 #### Workflow A: Participant Registration & Smart ID Gap-Filling
 
@@ -245,301 +229,383 @@ The system features four distinct participant and staff roles:
 sequenceDiagram
     autonumber
     actor Supervisor as Admin / Supervisor
-    participant UI as RegistrationForm
-    participant App as AppMain Controller
+    participant Page as RegistrationPage
+    participant Form as RegistrationForm
+    participant Store as useFestivalStore
     participant DB as Supabase PostgreSQL
 
-    Supervisor->>UI: Fills student data (Stage: Primary, Year: 3)
-    UI->>App: onSubmit(data)
-    App->>DB: Query exact full_name match
+    Supervisor->>Page: Navigates to /registration
+    Page->>Form: Renders form with stage & academic year options
+    Supervisor->>Form: Enters student details & selects photo
+    Form->>Page: onSubmit(data)
+    Page->>DB: Query exact full_name match
     alt Duplicate Name Found
-        DB-->>App: Existing record returned
-        App-->>Supervisor: Toast Error ("هذا المخدوم مسجل بالفعل!")
+        DB-->>Page: Existing record returned
+        Page-->>Supervisor: Toast Error ("هذا المخدوم مسجل بالفعل في النظام!")
     else Unique Record
-        App->>App: Calculate Prefix: Stage 'P' + Year '3' -> 'P3'
-        App->>DB: SELECT participant_id WHERE id LIKE 'P3%'
-        DB-->>App: Existing IDs ['P301', 'P302', 'P304']
-        App->>App: Execute Gap-Filling Algorithm -> Next ID: 'P303'
-        App->>DB: INSERT INTO participants (participant_id: 'P303', ...)
-        DB-->>App: Confirmation
-        App-->>Supervisor: Toast Success ("تم تسجيل المشارك بنجاح")
-        App->>App: Refresh in-memory participants cache
+        Page->>Page: Compute Prefix: Stage 'P' + Year '3' -> 'P3'
+        Page->>DB: SELECT participant_id WHERE participant_id LIKE 'P3%'
+        DB-->>Page: Existing IDs ['P301', 'P302', 'P304']
+        Page->>Page: Execute Gap-Filling Algorithm -> Next ID: 'P303'
+        Page->>DB: INSERT INTO participants (participant_id: 'P303', points_balance: 0, ...)
+        DB-->>Page: Record Created
+        Page->>Store: fetchData() (Refreshes participants cache)
+        Page-->>Supervisor: Toast Success ("تم تسجيل المشارك بنجاح")
+        Page->>Supervisor: Redirects to /dashboard
     end
 ```
 
-#### Workflow B: QR Attendance Check-in with Conflict Prevention
+#### Workflow B: High-Speed QR Attendance Scanning & Conflict Prevention
 
 ```mermaid
 sequenceDiagram
     autonumber
     actor Servant as Servant / Teacher
-    participant Scanner as QRScanner Component
-    participant App as AppMain Controller
+    participant Scanner as QRScanner (/scanner)
+    participant Store as useFestivalStore
     participant DB as Supabase PostgreSQL
 
-    Servant->>Scanner: Points camera at Student Badge
-    Scanner->>Scanner: Decodes QR payload (UUID or Smart ID)
-    Scanner->>App: handleScanSuccess(identifier)
-    App->>App: Resolve target participant from in-memory cache
-    alt Code not registered
-        App-->>Scanner: Returns false (Camera stays active)
-        Scanner-->>Servant: Toast Error ("هذا الكود غير مسجل")
-    else Participant Found
-        App->>DB: INSERT INTO attendance_logs (participant_id, servant_id, attendance_date: TODAY)
+    Servant->>Scanner: Aims camera at Student Badge
+    Scanner->>Scanner: Decodes QR payload (Smart ID e.g. 'P301' or UUID)
+    Scanner->>Store: Resolve participant from store.participants
+    alt Code Not Found in Store
+        Scanner-->>Servant: Toast Error ("هذا الكود غير مسجل في النظام")
+    else Participant Resolved
+        Scanner->>DB: INSERT INTO attendance_logs (participant_id, servant_id, attendance_date: TODAY)
         alt Duplicate Check-in for Today
-            DB-->>App: Unique violation / Record exists
-            App-->>Servant: Toast Info ("تم تسجيل حضور هذا المشارك مسبقاً اليوم")
-        else Successful Insert
-            DB-->>App: 201 Created
-            App->>DB: UPDATE participants SET points_balance = points_balance + 10
-            App->>DB: INSERT INTO points_transactions ('attendance_bonus', 10)
-            App->>App: Mutate in-memory cache (attended: true, points: +10)
-            App-->>Servant: Toast Success ("تم تسجيل الحضور وإضافة 10 نقاط")
-            Scanner->>Scanner: Set 2s throttle lock, then resume
+            DB-->>Scanner: Unique Constraint Violation (unique_daily_attendance)
+            Scanner-->>Servant: Toast Info ("تم تسجيل حضور هذا المشارك مسبقاً اليوم")
+        else First Check-in Today
+            DB-->>Scanner: 201 Created
+            Scanner->>DB: UPDATE participants SET points_balance = points_balance + 10
+            Scanner->>DB: INSERT INTO points_transactions ('attendance_bonus', 10)
+            Scanner->>Store: setParticipants(optimistic update: points + 10, attended = true)
+            Scanner-->>Servant: Toast Success ("تم تسجيل الحضور بنجاح وإضافة 10 نقاط")
+            Scanner->>Scanner: Set throttle lock, then resume camera
         end
     end
 ```
 
-#### Workflow C: Marketplace Redemption with Overdraft Guard
+#### Workflow C: Festival Marketplace Point Deduction with Overdraft Guard
 
 ```mermaid
 flowchart TD
-    Start([Servant triggers Market Scan]) --> Scan[Scan Participant Badge]
-    Scan --> Identify[Resolve Participant & Current Points]
-    Identify --> OpenModal[Display MarketModal with Item Cost Input]
+    Start([Servant triggers Market Scanner /scanner?mode=market]) --> Scan[Scan Participant Badge]
+    Scan --> Resolve[Resolve Participant & Current Points Balance]
+    Resolve --> OpenModal[Display MarketModal with Current Points]
     OpenModal --> InputPoints[/Servant enters Points to Deduct/]
-    CheckBalance{Points to Deduct <= Current Balance?}
+    CheckBalance{Points to Deduct <= Current Points?}
     InputPoints --> CheckBalance
     CheckBalance -- No --> OverdraftError[Toast Error: الرصيد غير كافٍ]
     OverdraftError --> OpenModal
-    CheckBalance -- Yes --> SetProcessing[Set Loading State & Lock UI]
+    CheckBalance -- Yes --> SetProcessing[Set Loading State & Disable Actions]
     SetProcessing --> DBUpdate[UPDATE participants: points_balance = current - deduct]
     DBUpdate --> DBLog[INSERT points_transactions: type 'market_deduct', amount: -deduct]
-    DBLog --> StateSync[Update in-memory participant points state]
+    DBLog --> StateSync[Update Store participants state in-memory]
     StateSync --> SuccessToast[Toast Success: تم خصم النقاط بنجاح]
-    SuccessToast --> CloseModal[Close Modal & Return to Dashboard]
+    SuccessToast --> CloseModal[Close Modal & Return to Scanner or Dashboard]
 ```
 
-#### Workflow D: Staff Onboarding & Approval Lifecycle
+#### Workflow D: Servant Onboarding, Synthetic Auth & Approval Lifecycle
 
 ```mermaid
 stateDiagram-v2
-    [*] --> ServantRegistration: Servant submits SignupPage
-    ServantRegistration --> SmartIDAssigned: System computes Smart ID (e.g. NP101)
-    SmartIDAssigned --> SupabaseAuthUser: auth.users record created with synthetic email
-    SupabaseAuthUser --> PendingReview: servants record inserted with status = 'pending'
+    [*] --> ServantSignup: Servant fills /signup form
+    ServantSignup --> ComputeID: System generates Smart ID (e.g. NP101)
+    ComputeID --> CreateAuth: auth.users record created with synthetic email (np101@aribsalin.com)
+    CreateAuth --> InsertServants: servants record inserted with status = 'pending'
+    InsertServants --> SignOut: System signs out session immediately & shows Smart ID
     
     state PendingReview {
-        [*] --> AwaitingAdmin
-        AwaitingAdmin --> Rejected: Admin clicks Reject
-        AwaitingAdmin --> Approved: Admin toggles Role & clicks Approve
+        [*] --> AwaitingAdminReview: Listed in /requests
+        AwaitingAdminReview --> Rejected: Admin clicks Reject / Delete
+        AwaitingAdminReview --> Approved: Admin toggles Role & clicks Approve
     }
     
-    Rejected --> RecordDeleted: Deleted from servants & auth
-    RecordDeleted --> [*]
+    Rejected --> RecordPurged: Record deleted from servants table
+    RecordPurged --> [*]
     
     Approved --> ActiveServant: status = 'approved'
-    ActiveServant --> LoginAllowed: Servant logs in with Smart ID & Password
-    LoginAllowed --> [*]
+    ActiveServant --> LoginPermitted: Servant logs in at /login with Smart ID & Password
+    LoginPermitted --> [*]
 ```
 
-#### Workflow E: Unified Participants Directory Access
+#### Workflow E: Universal Participants Directory Access & Scoped RBAC
 
 ```mermaid
 flowchart TD
     A[Servant navigates to Dashboard] --> B[Clicks 'سجل المشاركين' Button]
-    B --> C[AppMain routes to 'participantsPage']
-    C --> D[Evaluate canManageParticipants: role in 'admin', 'supervisor']
-    D --> E[Render ParticipantsPage with dynamic canEdit & canDelete props]
-    E --> F{Is Admin or Supervisor?}
-    F -- Yes --> G[Full Access: View, Search, Manual Attendance, Points, Edit, Delete]
-    F -- No --> H[Scoped Access: View, Search, Manual Attendance, Points - Edit/Delete Hidden]
+    B --> C[Router navigates to /participants]
+    C --> D[Evaluate currentServant.role from Zustand Store]
+    D --> E{Is Admin or Supervisor?}
+    E -- Yes --> F[Full Permissions: View, Search, Filter, Manual Attendance, Points Adjustment, Edit, Delete]
+    E -- No --> G[Scoped Normal Servant: View, Search, Filter, Manual Attendance, Points Adjustment - Edit/Delete Hidden]
+```
+
+#### Workflow F: Attendance Cancellation & Compensating Point Rollback
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as Supervisor / Admin
+    participant Profile as StudentProfile (/profile/:id)
+    participant Store as useFestivalStore
+    participant DB as Supabase PostgreSQL
+
+    User->>Profile: Clicks trash icon next to attendance date
+    Profile->>Profile: confirm("هل أنت متأكد من حذف حضور يوم X؟")
+    Profile->>DB: DELETE FROM attendance_logs WHERE participant_id AND attendance_date
+    Profile->>DB: SELECT points_balance FROM participants
+    DB-->>Profile: Current balance (e.g., 25)
+    Profile->>Profile: Calculate new balance: Math.max(0, 25 - 10) -> 15
+    Profile->>DB: UPDATE participants SET points_balance = 15
+    Profile->>DB: INSERT INTO points_transactions ('deduction', -10, 'إلغاء مكافأة حضور يوم X')
+    Profile->>Store: fetchData() (Refreshes global roster state)
+    Profile-->>User: Toast Success ("تم حذف الحضور وتحديث النقاط")
+```
+
+#### Workflow G: Bulk Printable ID Card Deck Generation
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Admin as System Administrator
+    participant Dashboard as Dashboard (/dashboard)
+    participant Modal as BulkIDDownloadModal
+    participant DOM as Off-Screen Canvas DOM
+    participant PDF as jsPDF Document Engine
+
+    Admin->>Dashboard: Clicks "تحميل الكروت"
+    Dashboard->>Modal: Opens BulkIDDownloadModal
+    Admin->>Modal: Selects stages (e.g. Primary 1 & 2, Primary 3 & 4)
+    Admin->>Modal: Clicks "بدء التحميل"
+    Modal->>Modal: Filter target participants from store.participants
+    Modal->>PDF: Initialize new jsPDF (format: [350, 550] px)
+    loop Batches of 8 Cards (BATCH_SIZE = 8)
+        Modal->>DOM: Mount 8 IDCard instances with high-res logos
+        Modal->>Modal: Await 2.5s render & image-loading delay
+        loop For each card in current batch
+            Modal->>DOM: Rasterize via html2canvas (scale: 2, useCORS: true)
+            DOM-->>Modal: HTML5 Canvas
+            Modal->>PDF: Convert canvas to JPEG & addPage([350, 550])
+            Modal->>Modal: Update progress counter (current / total)
+        end
+    end
+    Modal->>PDF: pdf.save('كروت_المشاركين.pdf')
+    Modal-->>Admin: Download triggers automatically in browser
 ```
 
 ---
 
 ## 4. Architecture & State Management
 
-### Application Lifecycle & Centralized State Hub
-Rather than decomposing application state into fragmented, deeply nested React Context Providers (which can introduce provider-nesting complexity, memoization overhead, and cascading re-renders on mobile devices), Aribsalin implements a **Centralized Root State Hub Pattern** encapsulated inside `src/components/layout/AppMain.tsx`.
-
-`AppMain` serves as the application's root controller, orchestrating:
-1. **Persistent Authentication & Session Lifecycle:** Synchronized with Supabase's `onAuthStateChange` stream.
-2. **Synchronous View State Machine:** Clean transitions between 19 distinct views without browser URL dependencies, ideal for web app and mobile environments.
-3. **Optimistic Data Synthesis:** Decoupled database querying where `participants` and `attendance_logs` are fetched independently and joined in memory.
-4. **Hardware Scanner Coordination:** Managing camera state, flash toggles, error recovery, and scan-lock timeouts.
+### End-to-End System Data Flow
 
 ```
-+-----------------------------------------------------------------------------------------+
-|                                    AppMain Controller                                   |
-|                                                                                         |
-|  [Auth Stream]           [View State Machine]           [Festival Data Cache]           |
-|  - session: Session      - currentView: View            - participants: Participant[]   |
-|  - currentServant: any   - viewerRole: Role             - attendance_logs: In-Memory    |
-|  - isAuthenticated       - scanMode: ScanMode           - activeDayCalculators          |
-+-----------------------------------------------------------------------------------------+
-       |                           |                               |
-       v                           v                               v
-+------------------+     +-------------------+           +-------------------+
-|  Auth Gateway    |     |  Dashboard Hub    |           |  Modal / Action   |
-|  - RoleSelection |     |  - Servant Info   |           |  - MarketModal    |
-|  - LoginPage     |     |  - Action Buttons |           |  - AddPointsModal |
-|  - SignupPage    |     |  - Directory Page |           |  - ManualPoints   |
-|  - StudentPortal |     |  - Sub-Pages      |           |  - BulkIDDownload |
-+------------------+     +-------------------+           +-------------------+
+                                  [Browser Client]
+                                          │
+                  ┌───────────────────────┴───────────────────────┐
+                  │                                               │
+            React Router v7                                Zustand Store
+      (/login, /dashboard, etc.)                       (useFestivalStore)
+                  │                                               │
+          AuthInitializer                                  Central Reactive
+        (Session & Welcome)                                Data Cache & APIs
+                  │                                               │
+                  ├───────────────────────┬───────────────────────┤
+                  ▼                       ▼                       ▼
+           Supabase Auth          Supabase PostgreSQL      Supabase Storage
+         (Synthetic Emails)        (Relational Roster)       ('profiles' bucket)
 ```
 
-### Virtual State Domains (In-Memory State Hub Architecture)
-The global state managed inside `AppMain.tsx` maps to five distinct functional domains:
-
-#### 1. Auth & Identity Domain
-* `isAuthenticated: boolean` — Validates whether an active session exists.
-* `currentServant: TeacherData | null` — Stores full profile of logged-in staff (ID, role, educational stage, photo).
-* `viewerRole: 'servant' | 'student'` — Determines whether the UI renders administrative dashboards or participant profile cards.
-* `canManageParticipants: boolean` — Derived boolean (`['admin', 'supervisor'].includes(currentServant?.role)`) controlling administrative write operations.
-
-#### 2. Festival Data & Roster Domain
-* `participants: Participant[]` — In-memory cached array of all registered participants, containing:
-  - Demographic records (`fullName`, `gender`, `educational_stage`, `academic_year`, `address`).
-  - Computed points balance (`points_balance`).
-  - Joined attendance records (`attendanceDays: string[]`).
-  - Attendance flag for the current date (`attended: boolean`).
-* **Why In-Memory Merge?** PostgREST nested resource joins (`participants?select=*,attendance_logs(*)`) can exceed connection query limits or fail if foreign key caches desynchronize. Fetching `participants` and `attendance_logs` separately and joining them in JavaScript guarantees high throughput, predictability, and fault tolerance.
-
-#### 3. View Routing & Navigation State Machine
-* `currentView: View` — The active route rendered on screen:
-  `'roleSelection' | 'login' | 'signup' | 'studentPortal' | 'studentScanner' | 'dashboard' | 'registration' | 'scanner' | 'market' | 'addPoints' | 'manualPoints' | 'profile' | 'finance' | 'statistics' | 'teachers' | 'servantProfile' | 'registrationRequests' | 'sessions' | 'participantsPage'`
-* `selectedParticipantId: string | null` — Pointer to the active participant for modal actions or profile views.
-* `selectedServantProfileId: string | null` — Pointer for servant profile inspection.
-* `servantProfileSource: 'dashboard' | 'teachers' | 'registrationRequests'` — Preserves navigation breadcrumbs when viewing servant profiles.
-
-#### 4. Hardware & QR Scanner Domain
-* `scanMode: 'attendance' | 'market' | 'addPoints' | 'viewDetails'` — Configures how the scanner component processes decoded badges.
-* `scanLockRef: boolean` — Prevents rapid double-scanning of the same barcode before the database transaction completes.
-
-#### 5. Modals & Mutations Domain
-* `selectedParticipantForPoints` — Active record being adjusted in `ManualPointsModal`.
-* `editData` — Pre-filled payload passed to `RegistrationForm` or `SignupPage` when updating an existing record.
-* `isProcessingMarket` / `isProcessingAddPoints` — UI loading locks preventing multi-click duplicate writes.
+1. **Routing & Code-Splitting:** The user navigates via URL routes. React Router dynamically imports the target chunk via `React.lazy()`.
+2. **Session Bootstrapping:** `<AuthInitializer>` mounts at the root, invoking `initializeAuth()` and `fetchData()` on the Zustand store. It subscribes to Supabase auth events (`onAuthStateChange`) to keep the user state synchronized.
+3. **Reactive Global Store (`useFestivalStore`):** Serves as the single source of truth for the roster, authenticated servant profile, and daily attendance counters.
+4. **Backend Infrastructure (Supabase):**
+   - **PostgreSQL:** Persists relational data (`participants`, `servants`, `attendance_logs`, `points_transactions`, `financial_transactions`, `areas`).
+   - **Auth Engine:** Issues and validates JWTs using synthetic identity mapping (`[teacher_id]@aribsalin.com`).
+   - **Storage Buckets:** Stores uploaded avatar photos in the public `profiles/` bucket.
 
 ---
 
-### Data Flow & Relational Integrity
+### State Management Architecture: Zustand vs. Context
 
+The application deliberately separates domain state from UI state:
+
+* **Global Domain State (Zustand):** All business models (participants, attendance, staff credentials, roles) are managed in `src/store/useFestivalStore.ts`. This provides:
+  - Selector-based subscriptions with zero re-rendering of unconcerned tree branches.
+  - Asynchronous thunks (`fetchData`, `initializeAuth`, `logout`) co-located with state definitions.
+  - Direct, unhooked store access outside React components when required.
+* **Component-Level UI State (React Context):** React Context is reserved exclusively for headless compound UI controls located in `src/components/ui/`:
+  - `FormContext` (`src/components/ui/form.tsx`) for form field validation bindings.
+  - `CarouselContext` (`src/components/ui/carousel.tsx`) for swipe navigation.
+  - `ChartContext` (`src/components/ui/chart.tsx`) for chart tooltips.
+  - `SidebarContext` (`src/components/ui/sidebar.tsx`) for drawer layout states.
+
+```typescript
+// Core Zustand State Contract (src/store/useFestivalStore.ts)
+export interface FestivalState {
+  isAuthenticated: boolean;
+  currentServant: any | null;
+  viewerRole: 'servant' | 'student';
+  participants: any[];
+  todayAttendance: number;
+  isInitialized: boolean;
+
+  setAuth: (isAuthenticated: boolean) => void;
+  setCurrentServant: (servant: any) => void;
+  setViewerRole: (role: 'servant' | 'student') => void;
+  setParticipants: (participants: any[] | ((prev: any[]) => any[])) => void;
+  setTodayAttendance: (val: number | ((prev: number) => number)) => void;
+  setInitialized: (initialized: boolean) => void;
+  logout: () => Promise<void>;
+  fetchData: () => Promise<void>;
+  initializeAuth: () => Promise<void>;
+}
 ```
-[Browser Client]
-       │
-       ├─── 1. Authenticate with Smart ID (Synthesized: {id}@aribsalin.com) ───► Supabase Auth
-       │
-       ├─── 2. Fetch Roster & Logs Independently ──────────────────────────────► PostgreSQL
-       │       (SELECT * FROM participants)
-       │       (SELECT participant_id, scanned_at, attendance_date FROM attendance_logs)
-       │
-       ├─── 3. In-Memory Data Stitching & Sanitization (AppMain.tsx)
-       │
-       ├─── 4. Upload Profile Avatars ────────────────────────────────────────► Supabase Storage ('profiles')
-       │
-       └─── 5. Write Transactions & Logs (Atomic Mutations) ──────────────────► PostgreSQL
-               - attendance_logs
-               - points_transactions
-               - financial_transactions
-```
+
+#### Store Slice Breakdown:
+* `isAuthenticated: boolean` — Tracks whether a valid Supabase JWT session exists.
+* `currentServant: any | null` — Stores the authenticated servant's database record (role, name, stage, ID).
+* `viewerRole: 'servant' | 'student'` — Dictates UI mode (Administrative/Servant interface vs. Student badge view).
+* `participants: any[]` — Global in-memory cached roster of all festival participants, enriched with attendance history and point totals.
+* `todayAttendance: number` — Cached count of participants present today.
+* `isInitialized: boolean` — True once initial auth check and roster fetch have resolved.
+
+---
+
+### Session Management & Boundary Components
+
+1. **`AuthInitializer` (`src/components/auth/AuthInitializer.tsx`):**  
+   Acts as the application's root lifecycle provider. It triggers `initializeAuth()` and `fetchData()`, binds `supabase.auth.onAuthStateChange`, renders the global Sonner `<Toaster />`, and manages the first-visit splash screen (`<WelcomeScreen />`).
+2. **`RoleGuard` (`src/components/auth/RoleGuard.tsx`):**  
+   Secures role-restricted routes (`/statistics`, `/registration`, `/finance`, `/sessions`, `/requests`, `/teachers`):
+   - If `!isInitialized`, displays a branded loading spinner.
+   - If `!isAuthenticated`, redirects the client to `/login` preserving intended destination in router state.
+   - If `allowedRoles` does not include `currentServant.role`, displays an unauthorized toast and redirects to `/dashboard`.
+3. **`AuthGuard` (`src/components/auth/RoleGuard.tsx`):**  
+   A specialized convenience wrapper around `RoleGuard` with no role restrictions, securing routes that require any logged-in servant (`/dashboard`, `/participants`, `/servant-profile/:id`).
+
+---
+
+### Data Ingestion & In-Memory Stitching Pattern
+
+To avoid complex, fragile SQL joins across Supabase PostgREST endpoints (`participants?select=*,attendance_logs(*)`), which fail when foreign key relationship caches fall out of sync, `fetchData()` implements an independent two-step fetch and client-side merge:
+
+1. **Fetch Participants:** `supabase.from('participants').select('*').order('created_at', { ascending: false })`
+2. **Fetch Attendance Logs:** `supabase.from('attendance_logs').select('participant_id, scanned_at, attendance_date').limit(50000)`
+3. **In-Memory Stitching:**  
+   The store maps over participant records, filters associated attendance logs, formats unique ISO date strings (`attendanceDays`), calculates today's presence flag (`attended = uniqueAttendanceDays.includes(today)`), and populates `participants`.
+
+---
 
 ### Database Schema Specification (Supabase PostgreSQL)
 
-The backend database operates on a relational PostgreSQL schema designed for high throughput and referential integrity:
-
 ```sql
--- 1. PARTICIPANTS TABLE (المشاركين)
+-- =============================================================================
+-- 1. PARTICIPANTS TABLE (سجل المخدومين / الطلاب)
+-- =============================================================================
 CREATE TABLE public.participants (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
-  participant_id text UNIQUE,                     -- Human-readable Smart ID (e.g. P301, K002)
-  full_name text NOT NULL,                        -- Normalized Arabic full name
+  participant_id text UNIQUE,                     -- Formatted Smart ID (e.g., P301, K002)
+  full_name text NOT NULL,                        -- Full name in Arabic
   gender text CHECK (gender IN ('male', 'female')),
   educational_stage text NOT NULL,                -- kg | primary | preparatory | secondary | university | graduate
   academic_year text,                            -- Grade level (e.g., الصف الثالث الابتدائي)
-  birth_date date,
-  class_or_job text,                             -- School, College, or Employment
+  birth_date date,                               -- Date of birth
+  class_or_job text,                             -- School, University, or Workplace
   father_of_confession text,                     -- Name of Father of Confession
-  mobile_personal text,
-  mobile_father text,
-  mobile_mother text,
-  address_area text,                             -- Neighborhood / District
-  address_details text,                          -- Detailed street address
-  points_balance integer DEFAULT 0,              -- Current accumulated point balance
-  photo_url text,                                -- Public URL in 'profiles' bucket
+  mobile_personal text,                          -- 11-digit mobile number
+  mobile_father text,                            -- Father's contact number
+  mobile_mother text,                            -- Mother's contact number
+  address_area text,                             -- Neighborhood / Area name
+  address_details text,                          -- Full street address
+  points_balance integer DEFAULT 0,              -- Accumulated points balance
+  photo_url text,                                -- Public URL in 'profiles' storage bucket
   created_at timestamp with time zone DEFAULT now(),
   CONSTRAINT participants_pkey PRIMARY KEY (id)
 );
 
--- 2. SERVANTS TABLE (الخدام)
+-- =============================================================================
+-- 2. SERVANTS TABLE (سجل الخدام والمشرفين)
+-- =============================================================================
 CREATE TABLE public.servants (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),      -- Matches auth.users.id
-  teacher_id text NOT NULL UNIQUE,                -- Smart ID (e.g. A01, SP301, NP101)
-  full_name text NOT NULL,
+  id uuid NOT NULL DEFAULT gen_random_uuid(),     -- Matches auth.users(id)
+  teacher_id text NOT NULL UNIQUE,                -- Smart ID (e.g., A01, SP301, NP101)
+  full_name text NOT NULL,                        -- Servant full name
   gender text CHECK (gender IN ('male', 'female')),
   role text CHECK (role IN ('normal', 'supervisor', 'admin')),
-  class_stage text,                              -- Scoping level (e.g., primary_34)
-  academic_year text,
-  birth_date date,
-  father_of_confession text,
-  mobile_personal text,
-  address_area text,
-  address_details text,
-  photo_url text,
+  class_stage text,                              -- Serving stage (e.g., primary_34)
+  educational_stage text,                        -- Servant's personal education
+  academic_year text,                            -- Servant's personal academic year
+  class_or_job text,                             -- Servant's personal employment or faculty
+  birth_date date,                               -- Date of birth
+  father_of_confession text,                     -- Name of Father of Confession
+  mobile_personal text,                          -- Contact phone number
+  address_area text,                             -- Neighborhood / Area
+  address_details text,                          -- Detailed address
+  photo_url text,                                -- Avatar image URL
   status text DEFAULT 'approved' CHECK (status IN ('pending', 'approved')),
   created_at timestamp with time zone DEFAULT now(),
   CONSTRAINT servants_pkey PRIMARY KEY (id),
   CONSTRAINT servants_auth_fkey FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE
 );
 
--- 3. ATTENDANCE LOGS TABLE (سجلات الحضور)
+-- =============================================================================
+-- 3. ATTENDANCE LOGS TABLE (سجلات الحضور اليومي)
+-- =============================================================================
 CREATE TABLE public.attendance_logs (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   participant_id uuid NOT NULL,
-  attendance_date date DEFAULT CURRENT_DATE,      -- Prevents multiple check-ins per day
+  attendance_date date DEFAULT CURRENT_DATE,      -- Enforces calendar day uniqueness
   scanned_at timestamp with time zone DEFAULT now(),
-  servant_id uuid,
+  servant_id uuid,                               -- Servant who scanned/recorded
   CONSTRAINT attendance_logs_pkey PRIMARY KEY (id),
   CONSTRAINT attendance_logs_participant_id_fkey FOREIGN KEY (participant_id) REFERENCES public.participants(id) ON DELETE CASCADE,
   CONSTRAINT attendance_logs_servant_id_fkey FOREIGN KEY (servant_id) REFERENCES public.servants(id) ON DELETE SET NULL,
   CONSTRAINT unique_daily_attendance UNIQUE (participant_id, attendance_date)
 );
 
+-- =============================================================================
 -- 4. POINTS TRANSACTIONS TABLE (سجل حركة النقاط)
+-- =============================================================================
 CREATE TABLE public.points_transactions (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   participant_id uuid NOT NULL,
-  servant_id uuid,
-  transaction_type text NOT NULL,                 -- attendance_bonus | market_deduct | bonus_add | manual | addition | deduction
-  points_amount integer NOT NULL,                 -- Positive (credit) or Negative (debit)
-  description text,                              -- Explanatory note
+  servant_id uuid,                               -- Servant who authorized transaction
+  transaction_type text NOT NULL,                 -- attendance_bonus | market_deduct | bonus_add | deduction | manual
+  points_amount integer NOT NULL,                 -- Amount credited (+) or debited (-)
+  description text,                              -- Operational description
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()),
   CONSTRAINT points_transactions_pkey PRIMARY KEY (id),
   CONSTRAINT points_transactions_participant_id_fkey FOREIGN KEY (participant_id) REFERENCES public.participants(id) ON DELETE CASCADE,
   CONSTRAINT points_transactions_servant_id_fkey FOREIGN KEY (servant_id) REFERENCES public.servants(id) ON DELETE SET NULL
 );
 
+-- =============================================================================
 -- 5. FINANCIAL TRANSACTIONS TABLE (الخزينة والحركات المالية)
+-- =============================================================================
 CREATE TABLE public.financial_transactions (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   type text CHECK (type IN ('revenue', 'expense')),
   title text NOT NULL,
   amount integer NOT NULL,
   transaction_date date DEFAULT CURRENT_DATE,
-  education_stage text,                          -- Scoped stage or 'all'
-  person_name text,                              -- Collector or Payee
+  education_stage text,                          -- Stage tag (e.g., 'primary_12', 'all')
+  person_name text,                              -- Payer or Payee name
   description text,
-  servant_id uuid,
+  servant_id uuid,                               -- Responsible servant
   created_at timestamp with time zone DEFAULT now(),
   CONSTRAINT financial_transactions_pkey PRIMARY KEY (id),
   CONSTRAINT financial_transactions_servant_id_fkey FOREIGN KEY (servant_id) REFERENCES public.servants(id) ON DELETE SET NULL
 );
 
+-- =============================================================================
 -- 6. AREAS TABLE (المناطق السكنية)
+-- =============================================================================
 CREATE TABLE public.areas (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
-  name character varying NOT NULL UNIQUE,
+  name character varying NOT NULL UNIQUE,         -- Neighborhood name in Aswan
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()),
   CONSTRAINT areas_pkey PRIMARY KEY (id)
 );
@@ -549,27 +615,30 @@ CREATE TABLE public.areas (
 
 ## 5. Folder Structure & Deep Dive
 
-### Source Tree (ASCII)
+### ASCII Directory Tree
 
 ```
 src/
 ├── app/
-│   ├── App.tsx                     # Top-level React bootstrap component
+│   ├── App.tsx                     # React Router v7 routes, code-splitting & route boundaries
 │   └── utils/
-│       └── stageHelpers.ts         # Educational stage normalization & labels mapping
+│       └── stageHelpers.ts         # Education stage label normalization & sub-stage split logic
 ├── assets/
-│   └── images/                     # Static festival branding, Church crests, default avatars
-│       ├── Arebsalin-1.png         # Main festival emblem
-│       ├── aribsalin.jpeg          # Alternative festival banner
+│   └── images/                     # Official brand insignias, emblems, and logos
+│       ├── Arebsalin-1.png         # Main festival insignia
+│       ├── aribsalin.jpeg          # Festival backdrop asset
 │       ├── meni_Logo.png           # St. Mina Church historical insignia
-│       └── new-church-logo.png     # Official high-resolution Church crest
+│       └── new-church-logo.png     # Official St. Mina & Pope Kyrillos VI church crest
 ├── components/
+│   ├── auth/
+│   │   ├── AuthInitializer.tsx     # Session listener, Sonner Toaster & WelcomeScreen trigger
+│   │   └── RoleGuard.tsx           # Route guards (RoleGuard & AuthGuard) for RBAC enforcement
 │   ├── forms/
-│   │   └── RegistrationForm.tsx    # Participant onboarding form with duplicate validation
+│   │   └── RegistrationForm.tsx    # Participant registration/edit form with duplicate validation
 │   ├── layout/
-│   │   └── AppMain.tsx             # Central state hub, route controller & auth manager
+│   │   └── AppMain.tsx             # Backward-compatibility facade delegating to App.tsx
 │   ├── modals/
-│   │   ├── AddPointsModal.tsx      # Modal for crediting bonus points
+│   │   ├── AddPointsModal.tsx      # Modal for crediting custom reward points
 │   │   ├── BulkIDDownloadModal.tsx # Multi-card PDF compiler (8-at-a-time off-screen engine)
 │   │   ├── ManualPointsModal.tsx   # Search-driven manual points adjustment dialog
 │   │   └── MarketModal.tsx         # Marketplace point debit dialog with overdraft check
@@ -580,7 +649,7 @@ src/
 │   │   ├── QRScanner.tsx           # Camera & screenshot QR decoder with vibration suppression
 │   │   ├── TestQRCode.tsx          # Developer testing utility for barcode simulations
 │   │   └── WelcomeScreen.tsx       # Splash modal for first-time session greetings
-│   └── ui/                         # Radix UI & Tailwind CSS headless primitive components
+│   └── ui/                         # Headless Radix UI + Tailwind CSS primitive components (48 files)
 │       ├── accordion.tsx, alert-dialog.tsx, alert.tsx, aspect-ratio.tsx, avatar.tsx,
 │       ├── badge.tsx, breadcrumb.tsx, button.tsx, calendar.tsx, card.tsx, carousel.tsx,
 │       ├── chart.tsx, checkbox.tsx, collapsible.tsx, command.tsx, context-menu.tsx,
@@ -594,102 +663,104 @@ src/
 │   ├── supabase.ts                 # Supabase client singleton with environment guards
 │   └── uploadHelper.ts             # S3 image uploader to 'profiles' storage bucket
 ├── pages/
-│   ├── Dashboard.tsx               # Primary landing dashboard for authenticated servants
+│   ├── Dashboard.tsx               # Primary landing dashboard for authenticated staff
 │   ├── FinancePage.tsx             # Treasury ledger with budget breakdown & Recharts
 │   ├── LoginPage.tsx               # Smart ID & password authentication portal
 │   ├── ParticipantsPage.tsx        # Dedicated full-page participant directory & management
+│   ├── RegistrationPage.tsx        # Full-page participant registration & edit container
 │   ├── RegistrationRequestsPage.tsx# Review board for pending servant accounts
 │   ├── RoleSelectionPage.tsx       # Root gateway (Servant vs. Participant selection)
-│   ├── ServantProfile.tsx          # Servant profile details and avatar uploader
+│   ├── ServantProfile.tsx          # Servant profile details and avatar viewer
 │   ├── SessionsManagementPage.tsx  # Macro attendance session manager with 200-chunk deletion
 │   ├── SignupPage.tsx              # Servant onboarding with automated Smart ID generation
 │   ├── StatisticsPage.tsx          # Analytics dashboard with supervisor stage scoping
 │   ├── StudentPortalLogin.tsx      # Participant login portal via Smart ID or QR
-│   ├── StudentProfile.tsx          # Detailed participant profile, points ledger & PNG export
+│   ├── StudentProfile.tsx          # Participant profile, points ledger & PNG ID card export
 │   └── TeachersPage.tsx            # Servant directory grouped by stage with supervisor flags
+├── store/
+│   └── useFestivalStore.ts         # Global Zustand store managing roster, auth & sync
 ├── styles/
 │   ├── fonts.css                   # Google Fonts imports (Tajawal, Cairo) and RTL direction
-│   ├── globals.css                 # Custom CSS resets
+│   ├── globals.css                 # Base CSS resets
 │   ├── index.css                   # Aggregator importing fonts, tailwind, and theme
-│   ├── tailwind.css                # Tailwind CSS v4 compiler entry (`@import "tailwindcss"`)
+│   ├── tailwind.css                # Tailwind CSS v4 compiler entry (@import "tailwindcss")
 │   └── theme.css                   # Coptic design tokens, CSS variables & typography rules
 ├── types/
 │   └── index.ts                    # TypeScript interfaces (StudentData, Participant, TeacherData)
 ├── utils/
 │   └── textUtils.ts                # Arabic text normalizer (strips diacritics, unifies Alef/Haa)
-├── main.tsx                        # DOM mount point (`createRoot`)
+├── main.tsx                        # DOM mount point (createRoot)
 └── vite-env.d.ts                   # Vite client types declaration
 ```
 
 ---
 
-### Directory-by-Directory Deep Dive
+### Major Directory & Key File Deep Dive
 
 #### 📂 `src/app/`
-* **`App.tsx`:** The root React application component. Mounts `<AppMain />`.
-* **`utils/stageHelpers.ts`:** Normalization layer that maps database strings (e.g., `'ابتدائي'`, `'primary'`, `'primary_12'`) to unified UI labels (`stageLabels`). Provides `getParticipantClassStage(stage, year)` to intelligently parse primary school grade years into three distinct sub-stages:
-  - `primary_12` (Grades 1 & 2)
-  - `primary_34` (Grades 3 & 4)
-  - `primary_56` (Grades 5 & 6)
+* **`App.tsx`:** The root router component. Configures React Router DOM v7 with `lazy()` code-splitting across all 14 pages, wraps routes in `<AuthInitializer>`, and enforces RBAC boundaries using `<RoleGuard>` and `<AuthGuard>`.
+* **`utils/stageHelpers.ts`:** Maps raw database tokens (`kg`, `primary_12`, `primary_34`, `primary_56`, `preparatory`, `secondary`, `university_graduate`) to localized Arabic text (`stageLabels`). Provides `getParticipantClassStage(stage, year)` to divide Primary school into three distinct cohorts based on academic year text.
 
-#### 📂 `src/components/layout/`
-* **`AppMain.tsx`:** The architectural controller of the application (1,200+ lines). Holds global application state, listens to Supabase authentication events, handles view routing transitions across 19 views, merges participants with attendance logs in memory, calculates active festival days, and acts as the database controller for attendance, market debits, and points bonuses.
+#### 📂 `src/assets/images/`
+Stores brand assets imported as static ES modules:
+* `Arebsalin-1.png`: Circular official festival emblem.
+* `new-church-logo.png`: Crest of the Church of St. Mina & Pope Kyrillos VI.
+* `aribsalin.jpeg` & `meni_Logo.png`: Supplementary historical branding.
+
+#### 📂 `src/components/auth/`
+* **`AuthInitializer.tsx`:** Orchestrates session startup. Calls `initializeAuth()` and `fetchData()`, attaches Supabase `onAuthStateChange` listeners, renders the global `<Toaster />`, and opens `<WelcomeScreen />` on initial visits.
+* **`RoleGuard.tsx`:** Implements route-level security. Evaluates whether the user's role satisfies `allowedRoles` and redirects unauthorized requests to `/dashboard` with an error toast. Contains the `AuthGuard` sub-component.
 
 #### 📂 `src/components/forms/`
-* **`RegistrationForm.tsx`:** Participant enrollment and editing form. Features live client-side photo previews, neighborhood selection from the `areas` table, strict validation on personal and parent phone numbers, and duplicate name checks against the database before insertion.
+* **`RegistrationForm.tsx`:** Reusable participant enrollment form. Handles real-time photo selection with preview, fetches neighborhood names from the `areas` table, enforces strict 11-digit phone formatting, and validates against duplicate names.
 
 #### 📂 `src/components/modals/`
-* **`BulkIDDownloadModal.tsx`:** Compiles printable PDF card decks. Allows admins to select one or multiple educational stages. Renders student badges in off-screen batches of 8 using `html2canvas` at 2x scale, appending each rendered card to a custom-dimensioned `jsPDF` document (`[350, 550] px`) to prevent browser memory exhaustion.
-* **`MarketModal.tsx`:** Handles festival market purchases. Displays current student points, validates that the entered debit amount does not exceed the balance, and executes point deductions with audit logging.
-* **`AddPointsModal.tsx`:** Scan-driven reward modal allowing servants to grant custom points to participants.
-* **`ManualPointsModal.tsx`:** Search-driven point adjustment interface that does not require physical barcode scanning. Allows searching by student name or Smart ID, selecting an action (Add / Deduct), and previewing the new balance before committing.
+* **`BulkIDDownloadModal.tsx`:** Generates printable PDF card decks. Filters students by selected educational stages, renders cards in batches of 8 using `html2canvas` at 2x scale, and appends them to a `[350, 550] px` `jsPDF` document.
+* **`MarketModal.tsx`:** Handles festival marketplace item purchases. Checks that the debit amount does not exceed the student's balance and records `market_deduct` transactions.
+* **`AddPointsModal.tsx`:** Scan-triggered modal allowing servants to grant custom bonus points.
+* **`ManualPointsModal.tsx`:** Search-driven point adjustment interface that does not require camera scanning.
 
 #### 📂 `src/components/shared/`
-* **`IDCard.tsx`:** The official participant digital badge (350x550px). Renders the Church crest, festival emblem, participant photo, full name, educational stage, birth date, human-readable Smart ID, and an error-correcting (Level H) QR code. Automatically applies color theming based on gender (Sky Blue for boys, Rose Pink for girls, Royal Burgundy/Gold for default).
-* **`QRScanner.tsx`:** Hardened scanner wrapper utilizing `html5-qrcode`. Contains custom fixes for iOS Safari camera track freezes (omits `navigator.vibrate`), handles safe unmounting during back navigation, and provides an auxiliary `#file-qr-reader` canvas that scales screenshots up to 400px and disables image smoothing to parse low-resolution phone screenshots.
-* **`ParticipantsList.tsx`:** Compact roster table supporting full-text search (powered by `normalizeArabicText`), gender filters, stage filters, and attendance status filters. Includes a calendar date-picker for supervisors to log attendance retroactively.
-* **`ImageWithFallback.tsx`:** Resilient image loader with fallback initials and avatar icons.
-* **`WelcomeScreen.tsx`:** Welcome dialog displayed upon initial user login.
+* **`IDCard.tsx`:** The digital badge component (350x550px). Features church and festival logos, participant photo or initials, Arabic name, educational stage, Smart ID, and a Level-H `QRCodeSVG`.
+* **`QRScanner.tsx`:** Hardened QR scanning engine powered by `html5-qrcode`. Implements an isolated `#file-qr-reader` canvas instance for screenshot uploads and suppresses vibration APIs to protect iOS Safari camera streams.
+* **`ParticipantsList.tsx`:** Compact roster view with search, gender filtering, stage filtering, and manual attendance logging.
 
 #### 📂 `src/components/ui/`
-A comprehensive library of 48+ atomic UI primitives built on Radix UI and styled with Tailwind CSS tokens:
-* `button.tsx`, `card.tsx`, `dialog.tsx`, `dropdown-menu.tsx`, `input.tsx`, `select.tsx`, `table.tsx`, `tabs.tsx`, `sonner.tsx`, etc.
-* `use-mobile.ts`: Hook for responsive viewport detection (<768px).
-* `utils.ts`: Contains `cn()` (clsx + tailwind-merge) for clean class composition.
+A library of 48+ atomic, headless UI components built on Radix UI and Tailwind CSS (`button.tsx`, `dialog.tsx`, `dropdown-menu.tsx`, `input.tsx`, `select.tsx`, `table.tsx`, `tabs.tsx`, `sonner.tsx`, etc.).
 
 #### 📂 `src/lib/`
-* **`supabase.ts`:** Initializes the `@supabase/supabase-js` client using `import.meta.env.VITE_SUPABASE_URL` and `import.meta.env.VITE_SUPABASE_ANON_KEY`. Includes environment guards that log descriptive Arabic error messages in developer tools if keys are missing.
-* **`uploadHelper.ts`:** Asynchronous utility that takes a browser `File`, generates a collision-resistant filename (`{random}_{timestamp}.ext`), uploads it to the `profiles` storage bucket in the specified subfolder (`participants` or `servants`), and returns the public CDN URL.
+* **`supabase.ts`:** Configures and exports the Supabase client singleton with environment variable fallbacks.
+* **`uploadHelper.ts`:** Uploads profile pictures to Supabase Storage (`profiles` bucket) under `participants/` or `servants/` subdirectories and returns the public CDN URL.
 
 #### 📂 `src/pages/`
-* **`Dashboard.tsx`:** Primary hub for authenticated staff. Dynamically displays quick-action scan tiles, secondary management buttons ("سجل المشاركين" visible to all authenticated servants, and admin-only shortcuts), and logout options.
+* **`Dashboard.tsx`:** Main portal for staff. Renders quick-action scan tiles, servant profile overview, and administrative shortcuts.
 * **`ParticipantsPage.tsx`:** Full-screen participant directory accessible to all servants via Dashboard ("سجل المشاركين"). Features real-time search, multi-faceted filtering (Academic Year, Gender, Area), manual attendance dialog, points management, and dynamic permissions (`canEdit` and `canDelete` dynamically passed based on role).
-* **`FinancePage.tsx`:** Comprehensive financial accounting ledger. Tracks Revenues and Expenses, categorizes entries by educational stage, calculates net treasury balance, and visualizes cash flow using Recharts (Pie charts for expenditure categories, Bar charts for stage budgets).
-* **`StatisticsPage.tsx`:** Analytics dashboard. For supervisors, it strictly isolates metrics, leaderboards, and attendance timelines to their assigned `class_stage` and recalculates effective total days. For admins, it presents global festival metrics.
+* **`RegistrationPage.tsx`:** Handles new participant enrollment and modifications via `?edit=:id`. Calculates Smart IDs using gap-filling and updates the global roster.
+* **`FinancePage.tsx`:** Treasury accounting ledger. Records Revenues and Expenses, categorizes entries by educational stage, and visualizes cash flow using Recharts.
+* **`StatisticsPage.tsx`:** Analytics dashboard. For supervisors, it strictly isolates metrics, leaderboards, and attendance timelines to their assigned `class_stage`. For admins, it presents global festival metrics.
 * **`SessionsManagementPage.tsx`:** Macro attendance session manager. Groups check-in logs by date and stage. Enables admins to wipe an entire day's session for a stage, executing deletions in batches of 200 logs to circumvent PostgREST URL length limits.
-* **`RegistrationRequestsPage.tsx`:** Administrative gatekeeping panel displaying pending servant signups (`status = 'pending'`). Admins can inspect servant data, toggle their role (`normal`, `supervisor`, `admin`), approve access, or reject/delete records.
+* **`RegistrationRequestsPage.tsx`:** Administrative review board for pending servant signups (`status = 'pending'`).
 * **`TeachersPage.tsx`:** Staff directory grouping approved servants by educational stage, highlighting designated class supervisors with crown icons.
-* **`StudentProfile.tsx` & `ServantProfile.tsx`:** Detailed personal records. `StudentProfile` includes individual PNG badge download and granular attendance deletion with point rollbacks. `ServantProfile` allows profile picture updates.
+* **`StudentProfile.tsx` & `ServantProfile.tsx`:** Detailed personal records. `StudentProfile` includes individual PNG badge download and granular attendance deletion with point rollbacks. `ServantProfile` displays personal and service details.
 * **`StudentPortalLogin.tsx`:** Login screen for students via Smart ID input or QR camera scanning.
 * **`RoleSelectionPage.tsx`:** Initial entry screen allowing visitors to choose between Student Portal or Servant Portal.
-* **`LoginPage.tsx`:** Servant credentials authentication interface.
-* **`SignupPage.tsx`:** Servant registration interface.
+* **`LoginPage.tsx`:** Servant credentials authentication interface with synthetic email construction.
+* **`SignupPage.tsx`:** Servant registration interface with automatic Smart ID generation and pending status assignment.
+
+#### 📂 `src/store/`
+* **`useFestivalStore.ts`:** Central Zustand store managing authentication sessions, current servant profiles, the global participant cache, and data-fetching actions.
 
 #### 📂 `src/styles/`
-* **`theme.css`:** Custom CSS design tokens defining the Coptic Orthodox aesthetic (Burgundy, Gold, Warm Beige) across root variables (`--primary`, `--secondary`, `--background`, `--foreground`).
-* **`fonts.css`:** Imports Arabic web fonts (`Tajawal`, `Cairo`) and enforces RTL (`direction: rtl`).
-* **`tailwind.css`:** Tailwind CSS v4 compiler directive (`@import "tailwindcss"`).
-* **`index.css`:** Aggregates fonts, Tailwind, and theme imports.
-* **`globals.css`:** Base CSS resets and styling rules.
+* **`theme.css`:** Declares Coptic design tokens, CSS variables (`--primary`, `--secondary`, `--background`, `--foreground`), and border radiuses.
+* **`fonts.css`:** Imports Arabic web fonts (`Tajawal`, `Cairo`) and sets right-to-left layout direction.
+* **`tailwind.css`:** Tailwind CSS v4 compiler entry point (`@import "tailwindcss"`).
+* **`index.css` & `globals.css`:** Aggregates fonts, Tailwind, and theme imports with base resets.
 
 #### 📂 `src/types/`
-* **`index.ts`:** Domain model definitions:
-  - `StudentData`: Participant demographic and educational fields.
-  - `Participant`: Full participant object including points balance, attendance logs, and photo.
-  - `TeacherData`: Servant account profile, authentication fields, and assigned stage/role.
+* **`index.ts`:** TypeScript interfaces for `StudentData`, `Participant`, and `TeacherData`.
 
 #### 📂 `src/utils/`
-* **`textUtils.ts`:** Exports `normalizeArabicText(text: string)`. Strips Arabic diacritics (التشكيل), normalizes variants of Alef (`أ`, `إ`, `آ` -> `ا`), converts Taa Marbouta to Haa (`ة` -> `ه`), converts Alef Maksoura to Yaa (`ى` -> `ي`), and normalizes Hamzas (`ؤ` -> `و`, `ئ` -> `ي`). Guarantees that searching for "احمد" matches "أحمد" or "إحمد".
+* **`textUtils.ts`:** Provides `normalizeArabicText(text: string)`. Strips Arabic diacritics (التشكيل), unifies Alef variants (`أ`, `إ`, `آ` -> `ا`), converts Taa Marbouta to Haa (`ة` -> `ه`), converts Alef Maksoura to Yaa (`ى` -> `ي`), and normalizes Hamzas (`ؤ` -> `و`, `ئ` -> `ي`).
 
 ---
 
@@ -698,52 +769,51 @@ A comprehensive library of 48+ atomic UI primitives built on Radix UI and styled
 ### Design System & UI/UX Governance
 
 #### Aesthetic Philosophy: The Coptic Heritage Palette
-The visual design reflects the spiritual and cultural heritage of the Coptic Orthodox Church, blending solemn dignity with modern mobile software ergonomics:
+The design system combines the spiritual solemnity of Coptic liturgical art with modern mobile ergonomics:
 
-| Design Token | CSS Variable | Hex Color | Semantic Role in Interface |
+| Design Token | CSS Variable | Hex Value | Semantic Usage in Application |
 |---|---|---|---|
 | **Imperial Burgundy** | `var(--primary)` | `#8B1538` | Headers, primary CTA buttons, active tabs, Church branding. |
 | **Spiritual Gold** | `var(--secondary)` | `#C9A961` | Accent badges, medals, QR frame borders, subheadings. |
-| **Warm Beige / Parchment** | `var(--background)` | `#FAF7F2` | Main application background, soft card contrasts. |
-| **Deep Walnut** | `var(--foreground)` | `#3D2817` | High-contrast typography for readability under sunlight. |
-| **Muted Sand** | `var(--muted)` | `#E8DCC8` | Inactive borders, card outlines, disabled control backgrounds. |
+| **Warm Parchment** | `var(--background)` | `#FAF7F2` | Application background, subtle card contrast. |
+| **Deep Walnut** | `var(--foreground)` | `#3D2817` | High-contrast typography for sunlight readability. |
+| **Muted Sand** | `var(--muted)` | `#E8DCC8` | Disabled controls, inactive borders, subtle dividers. |
 | **Emerald Green** | `var(--success)` | `#10B981` | Points bonus confirmations, check-in success badges. |
 | **Crimson Red** | `var(--destructive)` | `#D4183D` | Expenses, delete actions, attendance cancellations. |
 | **Sky Blue** | `--male` | `#3B82F6` | Male student badge accents and demographic charts. |
 | **Rose Pink** | `--female` | `#EC4899` | Female student badge accents and demographic charts. |
 
 #### Strict Frontend Implementation Rules
-1. **Never Hardcode Harsh Black Borders:**  
-   Do not use `border: 1px solid black` or `border-black`. Always use the design system's border token: `border border-border` (which evaluates to `rgba(139, 21, 56, 0.15)`).
+1. **Never Hardcode 1px Solid Black Borders:**  
+   Do not write `border: 1px solid black` or use `border-black`. Always use the design system token: `border border-border` (which evaluates to `rgba(139, 21, 56, 0.15)`).
 2. **Strict Use of CSS Variables:**  
-   Components must bind to theme variables: `bg-primary`, `text-primary-foreground`, `bg-secondary`, `text-foreground`.
-3. **Typography & Font Stack:**  
-   Base font must always resolve to `'Tajawal', 'Cairo', -apple-system, sans-serif`. All typography must respect Right-to-Left (RTL) reading flow.
+   Always bind color utilities to the theme tokens: `bg-primary`, `text-primary-foreground`, `bg-secondary`, `text-foreground`.
+3. **Typography & Arabic Font Stack:**  
+   Base font family must resolve to `'Tajawal', 'Cairo', sans-serif`. All interfaces must maintain strict Right-to-Left (RTL) reading flow (`dir="rtl"`).
 4. **Mobile Touch Ergonomics:**  
-   Buttons must have a minimum touch target of 44x44px. Interactive elements must feature active-state micro-interactions (`active:scale-95` or `active:scale-[0.98] transition-transform`).
+   Buttons and interactive tiles must meet the minimum touch target of 44x44px and include active micro-interactions (`active:scale-95` or `active:scale-[0.98] transition-transform`).
 5. **No Native Alert Boxes:**  
-   Never call `window.alert()` in production workflows. Always use the `sonner` toast notification engine: `toast.success()`, `toast.error()`, `toast.info()`.
+   Never call `window.alert()` in production code. Always use the `sonner` toast engine: `toast.success()`, `toast.error()`, `toast.info()`.
 
 ---
 
 ### Local Development Setup
 
 #### Prerequisites
-* **Node.js:** `v18.18.0` or higher (Node 20+ recommended).
-* **Package Manager:** `pnpm` (v8 or v9). If not installed, run `npm install -g pnpm`.
-* **Browser:** Modern Chromium or Safari browser with webcam permissions enabled for QR testing.
+* **Node.js:** `v18.18.0` or higher (Node 20 LTS recommended).
+* **Package Manager:** `pnpm` (v8 or v9).
+* **Hardware:** Webcam/camera access enabled in browser settings for QR testing.
 
 #### Installation & Execution Commands
 
 ```bash
-# 1. Clone or navigate to the project directory
+# 1. Clone repository or navigate to the workspace
 cd D:\Aribsalin\Aribsalin
 
-# 2. Install workspace dependencies
+# 2. Install workspace dependencies via pnpm
 pnpm install
 
-# 3. Configure environment variables
-# Create a .env file in the root directory with your Supabase credentials:
+# 3. Configure local environment variables (.env in workspace root)
 cat <<EOF > .env
 VITE_SUPABASE_URL=https://your-project-id.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-public-key
@@ -753,29 +823,33 @@ EOF
 pnpm dev
 ```
 
-The application will launch at `http://localhost:5173` (or the next available port).
-
-#### Production Build & Verification
-
-```bash
-# Test the production bundle compilation
-pnpm build
-
-# Preview the production build locally
-pnpm preview
-```
+The application will be accessible at `http://localhost:5173`.
 
 ---
 
-### Critical Architectural Invariants & Edge Cases
+### Production Verification & Deployment
 
-When modifying or extending this codebase, developers and AI agents must preserve the following architectural implementations:
+```bash
+# 1. Compile production bundle and typecheck
+pnpm build
 
-#### 1. Smart ID Gap-Filling Algorithm
+# 2. Preview the compiled production build locally
+pnpm preview
+```
+
+Deployments are managed automatically via **Vercel** configured with `@vercel/static-build` in `vercel.json`.
+
+---
+
+### The 7 Critical Architectural Invariants & Edge Cases
+
+When developing or modifying this codebase, developers and AI agents must preserve the following architectural invariants:
+
+#### 1. Smart ID Gap-Filling Scheme
 Participant and servant IDs are not simple database autoincrements. They follow a formatted alphanumeric prefix scheme (`LXYY` for students, e.g., `P301`, and `RLXYY` for staff, e.g., `SP301`).  
 When a record is deleted, the algorithm finds the **first missing integer in the sequence** (gap filling) rather than blindly appending to the end:
-```ts
-// Example gap-filling implementation in AppMain.tsx
+```typescript
+// Gap-filling implementation in RegistrationPage.tsx and SignupPage.tsx
 let nextNum = 1;
 if (existingIds && existingIds.length > 0) {
   const numbers = existingIds
@@ -792,9 +866,9 @@ const smartId = `${prefix}${String(nextNum).padStart(2, '0')}`;
 ```
 *Never replace this logic with random UUIDs or plain autoincrements.*
 
-#### 2. Synthetic Email Authentication for Staff
+#### 2. Synthetic Domain Email Authentication Pattern
 To keep login simple for church servants who might not have corporate email addresses, staff log in using their Smart ID (e.g., `A01`, `SP301`). Under the hood, `LoginPage.tsx` synthesizes a virtual domain email:
-```ts
+```typescript
 const email = `${teacherId.trim().toLowerCase()}@aribsalin.com`;
 const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 ```
@@ -805,7 +879,7 @@ On iOS devices running Mobile Safari, calling the standard `navigator.vibrate()`
 
 #### 4. Supabase PostgREST URL Length Limits (200-Chunk Batches)
 When an administrator deletes an entire session containing hundreds of attendance records in `SessionsManagementPage.tsx`, executing `.in('id', longArrayOfUuids)` will cause HTTP 414 (URI Too Long) errors in PostgREST. The codebase chunks all array deletions into batches of 200:
-```ts
+```typescript
 const chunkSize = 200;
 for (let i = 0; i < logIds.length; i += chunkSize) {
   const chunk = logIds.slice(i, i + chunkSize);
@@ -814,29 +888,28 @@ for (let i = 0; i < logIds.length; i += chunkSize) {
 ```
 *Always maintain chunking on bulk delete or update operations.*
 
-#### 5. `html2canvas` Color & Rendering Constraints
+#### 5. `html2canvas` Color Space & Rendering Constraints
 When rasterizing the digital ID card in `html2canvas`, modern CSS color spaces like OKLCH (`oklch(...)`) can cause mobile canvas rendering to crash or produce black boxes. `src/components/shared/IDCard.tsx` uses static hexadecimal color codes (`#8B1538`, `#C9A961`, `#FAF7F2`) on exported nodes to ensure rendering fidelity across all mobile devices.
 
-#### 6. Dynamic RBAC Guarding on Participants Directory
-The Participants Directory (`ParticipantsPage`) is universally accessible to all authenticated servants via the Dashboard button **"سجل المشاركين"**. However, mutation rights must strictly depend on the user's role:
+#### 6. Universal Directory Access with Granular Scoped RBAC
+The Participants Directory (`/participants`) is universally accessible to all authenticated servants via the Dashboard button **"سجل المشاركين"**. However, mutation rights must strictly depend on the user's role:
 ```tsx
-const canManageParticipants = ['admin', 'supervisor'].includes(currentServant?.role);
+const userRole = currentServant?.role || 'normal';
+const canManage = ['admin', 'supervisor'].includes(userRole);
 
 <ParticipantsPage
-  participants={...}
-  onBack={() => setCurrentView('dashboard')}
-  onViewProfile={handleViewProfile}
-  onEditRequest={(rec) => handleEditRequest(rec, 'participant')}
-  onManagePoints={handleManagePointsRequest}
-  onDeleteParticipant={handleDeleteParticipant}
-  onManualAttendance={handleManualAttendance}
-  canEdit={canManageParticipants}
-  canDelete={canManageParticipants}
+  canEdit={canManage}
+  canDelete={canManage}
+  // Normal servants have read-only visibility into student details,
+  // but can record manual attendance and adjust points.
 />
 ```
-*Normal servants have read-only visibility into student details, but can register attendance and adjust points. Edit and delete operations remain exclusive to Admins and Supervisors.*
+*Never restrict access to the Participants Directory from normal servants; restrict only the edit and delete mutation actions.*
+
+#### 7. URL-Based Routing & Global Store Architectural Decoupling
+The codebase has migrated from the legacy monolithic `AppMain.tsx` controller to **React Router v7** and **Zustand 5**. Do not re-introduce large state hubs or nested context wrappers into `AppMain.tsx`. New features should be added as modular routed pages under `src/pages/` and interact with the centralized store via `useFestivalStore()`.
 
 ---
 
-### Document Maintenance Note
-This document is the authoritative master technical specification for the Aribsalin codebase. Any architectural alterations, new database tables, or workflow updates must be documented herein. For historical version releases, consult `MD/CHANGELOG.md`. For specific details on digital badge dimensions and logo imports, consult `MD/ID_CARD_DOCUMENTATION.md`.
+### Document Maintenance Policy
+This documentation file (`MD/ARIBSALIN-DOCUMENTATION.md`) is the canonical technical blueprint for the Aribsalin repository. Whenever schema modifications, new routes, or business rules are added, this file must be updated in sync. For release history, refer to `MD/CHANGELOG.md`. For digital badge design specs, refer to `MD/ID_CARD_DOCUMENTATION.md`. For the raw database schema snapshot, refer to `MD/schema.md`.
