@@ -3,7 +3,7 @@
 **Version:** 1.1.0  
 **Last Updated:** May 24, 2026
 
-Welcome to the documentation for the اريبصالين (Arribsalin) Summer Festival Management System!
+Welcome to the documentation for the خدمة التربية الكنسيه (Arribsalin) Summer Festival Management System!
 
 ---
 
@@ -309,7 +309,7 @@ Attribution for libraries, fonts, and resources used.
 
 ### Project Information
 - **Church:** St. Mina and Pope Kyrillos VI - Aswan
-- **Festival:** اريبصالين Summer Deacon School
+- **Festival:** خدمة التربية الكنسيه Summer Deacon School
 - **Version:** 1.1.0
 - **Status:** Active Development
 

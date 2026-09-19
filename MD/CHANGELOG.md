@@ -451,7 +451,7 @@ For complete documentation, see:
 ---
 
 **Church:** Church of the Great Martyr St. Mina the Wonderworker and Pope Kyrillos VI - Aswan  
-**Festival:** اريبصالين Summer Deacon School  
+**Festival:** خدمة التربية الكنسيه Summer Deacon School  
 **Developer:** Claude Code Assistant  
 **Maintained By:** Festival Development Team
 

@@ -1,4 +1,4 @@
-# اريبصالين (AVA Bishoy) - Summer Festival & Sunday School Management System
+# خدمة التربية الكنسيه (AVA Bishoy) - Summer Festival & Sunday School Management System
 ## Definitive Master Technical Architecture & Developer Reference Manual
 
 **System Version:** `2.0.0` (URL-Based Routing, Global Zustand Store, Granular RBAC, Smart ID Gap-Filling, Offline-Safe Scanning & Digital Badging)  
@@ -45,13 +45,13 @@
 ## 1. Project Idea & Concept
 
 ### Executive Summary
-**اريبصالين (AVA Bishoy)** is an enterprise-grade, mobile-first festival, Sunday school, and church ministry management system engineered specifically for the **Church of the Great Martyr St. Mina the Wonderworker & Pope Kyrillos VI in Aswan, Egypt**. Built as a reactive single-page application (SPA), the platform digitizes and unifies the operational lifecycle of summer deacon programs, spiritual festivals, and weekly youth services across all educational cohorts—from Kindergarten (`حضانة`) through University and Graduates (`جامعيين وخريجين`).
+**خدمة التربية الكنسيه (AVA Bishoy)** is an enterprise-grade, mobile-first festival, Sunday school, and church ministry management system engineered specifically for the **Church of the Great Martyr St. Mina the Wonderworker & Pope Kyrillos VI in Aswan, Egypt**. Built as a reactive single-page application (SPA), the platform digitizes and unifies the operational lifecycle of summer deacon programs, spiritual festivals, and weekly youth services across all educational cohorts—from Kindergarten (`حضانة`) through University and Graduates (`جامعيين وخريجين`).
 
 The name **AVA Bishoy** originates in the Coptic hymnological tradition (from Coptic: ⲁⲣⲓⲯⲁⲗⲓⲛ, meaning *"Chant"* or *"Sing hymns"* — أريبصالين), honoring the spiritual, liturgical, and pedagogical roots of the church's annual summer festival.
 
 ```
        +-------------------------------------------------------------+
-       |                  اريبصالين (AVA Bishoy)                     |
+       |                  خدمة التربية الكنسيه (AVA Bishoy)                     |
        |         Church Festival & Sunday School Engine              |
        +-------------------------------------------------------------+
                                        |
