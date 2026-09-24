@@ -136,7 +136,7 @@ export function BulkIDDownloadModal({ participants, onClose }: BulkModalProps) {
     }
 
     // Save the single PDF file
-    pdf.save(`AVA Bishoy_${selectedClasses.join('_')}.pdf`);
+    pdf.save(`ID_Cards_${selectedClasses.join('_')}.pdf`);
 
     setIsDownloading(false);
     setCurrentBatch([]);

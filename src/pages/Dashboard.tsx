@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Users, CheckSquare, ShoppingBag, UserPlus, Plus, FileText, Wallet, BarChart3, LogOut, User, UserCheck, BookOpen, Download } from 'lucide-react';
-import churchLogo from '../assets/images/AVA Bishoy church.png';
-import festivalLogo from '../assets/images/Arebsalin Logo.png';
+import churchLogo from '../assets/images/church logo.png';
+// import serviceLogo from '../assets/images/service logo.png';
 import { BulkIDDownloadModal } from '../components/modals/BulkIDDownloadModal';
 import { useFestivalStore } from '../store/useFestivalStore';
 
@@ -37,14 +37,15 @@ export function Dashboard({
   
   // Define roles based on currentServant.role
   const userRole = currentServant?.role || 'normal';
-  const isAdmin = userRole === 'admin';
+  const isAdmin = userRole === 'admin' || userRole === 'developer';
   const isSupervisor = userRole === 'supervisor';
-  const canManageParticipants = isAdmin || isSupervisor; // Admin & Supervisor can add, edit, delete
+  const canManageParticipants = isAdmin || isSupervisor; // Admin, Supervisor & Developer can add, edit, delete
 
   const roleLabels: Record<string, string> = {
     'normal': 'خادم',
     'supervisor': 'أمين فصل',
-    'admin': 'أمين الخدمة'
+    'admin': 'أمين الخدمة',
+    'developer': 'مطور النظام'
   };
 
   const stageLabels: Record<string, string> = {
@@ -71,7 +72,7 @@ export function Dashboard({
       <div className="bg-card border-b-2 border-primary/20 py-4 px-4 sticky top-0 z-10 shadow-sm">
         <div className="flex items-center justify-between">
           <img src={churchLogo} alt="Church Logo" className="w-14 h-14 object-contain" />
-          {/* <img src={festivalLogo} alt="Festival Logo" className="h-14 object-contain" /> */}
+          {/* <img src={serviceLogo} alt="service Logo" className="h-14 object-contain" /> */}
           <div className="w-14" /> {/* Spacer for centering */}
         </div>
       </div>
@@ -222,7 +223,7 @@ export function Dashboard({
             >
               <div className="flex items-center justify-center gap-3">
                 <BarChart3 className="w-5 h-5 text-primary" />
-                <span>إحصائيات الالخدمة</span>
+                <span>إحصائيات الخدمة</span>
               </div>
             </button>
           )}

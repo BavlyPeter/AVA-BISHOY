@@ -1,6 +1,6 @@
 import { Crown, Users } from 'lucide-react';
-import churchLogo from '../assets/images/AVA Bishoy church.png';
-import festivalLogo from '../assets/images/Arebsalin Logo.png';
+import churchLogo from '../assets/images/church logo.png';
+// import serviceLogo from '../assets/images/service logo.png';
 
 import { useNavigate } from 'react-router-dom';
 import { useFestivalStore } from '../store/useFestivalStore';
@@ -29,9 +29,9 @@ export function RoleSelectionPage({ onSelectRole }: RoleSelectionPageProps = {})
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
       <div className="flex flex-col items-center mb-12 space-y-6">
-        <img src={churchLogo} alt="Church Logo" className="w-24 h-24 object-contain shadow-lg rounded-full" />
-        {/* <img src={festivalLogo} alt="Festival Logo" className="h-16 object-contain" /> */}
-        <p className="text-muted-foreground text-center">مرحباً بك في نظام إدارة خدمة التربية الكنسية</p>
+        <img src={churchLogo} alt="Church Logo" className="w-35 h-35 object-contain shadow-lg rounded-full" />
+        {/* <img src={serviceLogo} alt="service Logo" className="h-16 object-contain" /> */}
+        <p className="text-muted-foreground text-center">مرحباً بك في نظام إدارة الخدمة</p>
       </div>
       <h2 className="text-2xl font-bold mb-8 text-foreground">من أنت؟</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-md">
